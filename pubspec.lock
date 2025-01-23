@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: "03f6da266a27a4538a69295ec142cb5717d7d4e5727b84658b63e1e1509bac9c"
+      sha256: "16e298750b6d0af7ce8a3ba7c18c69c3785d11b15ec83f6dcd0ad2a0009b3cab"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "79.0.0"
+    version: "76.0.0"
   _macros:
     dependency: transitive
     description: dart
@@ -18,10 +18,10 @@ packages:
     dependency: transitive
     description:
       name: analyzer
-      sha256: c9040fc56483c22a5e04a9f6a251313118b1a3c42423770623128fa484115643
+      sha256: "1f14db053a8c23e260789e9b0980fa27f2680dd640932cae5e1137cce0e46e1e"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "7.2.0"
+    version: "6.11.0"
   args:
     dependency: transitive
     description:
@@ -202,10 +202,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "27eb0ae77836989a3bc541ce55595e8ceee0992807f14511552a898ddd0d88ac"
+      sha256: "7856d364b589d1f08986e140938578ed36ed948581fbc3bc9aef1805039ac5ab"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.0.1"
+    version: "2.3.7"
   dbus:
     dependency: transitive
     description:
@@ -409,10 +409,10 @@ packages:
     dependency: "direct dev"
     description:
       name: json_serializable
-      sha256: b0a98230538fe5d0b60a22fb6bf1b6cb03471b53e3324ff6069c591679dd59c9
+      sha256: c2fcb3920cf2b6ae6845954186420fca40bc0a8abcc84903b7801f17d7050d7c
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "6.9.3"
+    version: "6.9.0"
   leak_tracker:
     dependency: transitive
     description:
@@ -713,10 +713,10 @@ packages:
     dependency: "direct dev"
     description:
       name: retrofit_generator
-      sha256: da17daf8cfdf695a402c894e4eebf91d2e815a47368820dd7a0b41a027739a9c
+      sha256: "8dfc406cdfa171f33cbd21bf5bd8b6763548cc217de19cdeaa07a76727fac4ca"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "9.1.7"
+    version: "8.2.1"
   shared_preferences:
     dependency: "direct main"
     description:
@@ -798,10 +798,10 @@ packages:
     dependency: transitive
     description:
       name: source_gen
-      sha256: "35c8150ece9e8c8d263337a265153c3329667640850b9304861faea59fc98f6b"
+      sha256: "14658ba5f669685cd3d63701d01b31ea748310f7ab854e471962670abcf57832"
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.0.0"
+    version: "1.5.0"
   source_helper:
     dependency: transitive
     description:
@@ -874,6 +874,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.0.2"
+  tuple:
+    dependency: transitive
+    description:
+      name: tuple
+      sha256: a97ce2013f240b2f3807bcbaf218765b6f301c3eff91092bcfa23a039e7dd151
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.2"
   typed_data:
     dependency: transitive
     description:

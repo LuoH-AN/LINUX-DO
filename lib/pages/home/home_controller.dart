@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
 
 import '../../controller/base_controller.dart';
+import '../../models/post.dart';
+import '../../net/api_service.dart';
 
 class HomeController extends BaseController {
   // 当前选中的tab索引
   final RxInt currentTab = 0.obs;
 
   // 帖子列表数据
-  final RxList posts = [].obs;
+  final RxList<Post> posts = <Post>[].obs;
 
   // 加载状态
   final RxBool isLoading = false.obs;
@@ -37,31 +39,21 @@ class HomeController extends BaseController {
   Future<void> fetchPosts() async {
     if (isLoading.value || !hasMore.value) return;
 
-    isLoading.value = true;
-    try {
-      await Future.delayed(const Duration(seconds: 1));
+    await handleAsync(() async {
+      final response = await ApiService.getPosts(
+        page: _page,
+        limit: 10,
+      );
 
-      // 模拟数据
-      final newPosts = List.generate(
-          10,
-          (index) => {
-                'id': '${_page * 10 + index}',
-                'title': '帖子标题 ${_page * 10 + index}',
-                'category': '运营反馈',
-                'isAnnouncement': index == 0,
-                'viewCount': 298,
-                'commentCount': 23,
-                'timeAgo': '2分钟',
-              });
-
-      posts.addAll(newPosts);
-      hasMore.value = _page < 5;
-      _page++;
-    } catch (e) {
-      print('Error fetching posts: $e');
-    } finally {
-      isLoading.value = false;
-    }
+      if (response.isSuccess) {
+        final newPosts = response.data ?? [];
+        posts.addAll(newPosts);
+        hasMore.value = newPosts.length >= 10;
+        _page++;
+      } else {
+        showErrorToast(response.message ?? '获取帖子列表失败');
+      }
+    });
   }
 
   // 刷新数据
@@ -70,5 +62,37 @@ class HomeController extends BaseController {
     hasMore.value = true;
     posts.clear();
     await fetchPosts();
+  }
+
+  // 创建帖子
+  Future<void> createPost(String title, String content) async {
+    await handleAsync(() async {
+      final response = await ApiService.createPost(
+        title: title,
+        content: content,
+      );
+
+      if (response.isSuccess) {
+        showSuccessToast('发布成功');
+        Get.back(); // 返回列表页
+        onRefresh(); // 刷新列表
+      } else {
+        showErrorToast(response.message ?? '发布失败');
+      }
+    });
+  }
+
+  // 删除帖子
+  Future<void> deletePost(String id) async {
+    await handleAsync(() async {
+      final response = await ApiService.deletePost(id);
+
+      if (response.isSuccess) {
+        showSuccessToast('删除成功');
+        posts.removeWhere((post) => post.id == id);
+      } else {
+        showErrorToast(response.message ?? '删除失败');
+      }
+    });
   }
 }

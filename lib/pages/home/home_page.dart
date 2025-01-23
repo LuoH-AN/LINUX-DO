@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../models/post.dart';
 import 'home_controller.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_sizes.dart';
@@ -143,7 +144,7 @@ class HomePage extends GetView<HomeController> {
   }
 
   // 帖子项
-  Widget _buildPostItem(Map post) {
+  Widget _buildPostItem(Post post) {
     return Container(
       margin: EdgeInsets.symmetric(
         horizontal: AppSizes.spaceNormal,
@@ -159,7 +160,7 @@ class HomePage extends GetView<HomeController> {
         children: [
           Row(
             children: [
-              if (post['isAnnouncement'] == true)
+              if (post.isAnnouncement)
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: AppSizes.spaceSmall,
@@ -188,7 +189,7 @@ class HomePage extends GetView<HomeController> {
                   borderRadius: BorderRadius.circular(AppSizes.radiusTiny),
                 ),
                 child: Text(
-                  post['category'],
+                  post.category,
                   style: TextStyle(
                     color: AppColors.primary,
                     fontSize: AppSizes.fontSmall,
@@ -199,7 +200,7 @@ class HomePage extends GetView<HomeController> {
           ),
           SizedBox(height: AppSizes.spaceSmall),
           Text(
-            post['title'],
+            post.title,
             style: TextStyle(
               fontSize: AppSizes.fontMedium,
               fontWeight: FontWeight.bold,
@@ -215,7 +216,7 @@ class HomePage extends GetView<HomeController> {
               ),
               SizedBox(width: AppSizes.spaceTiny),
               Text(
-                '${post['viewCount']}',
+                '${post.viewCount}',
                 style: TextStyle(
                   fontSize: AppSizes.fontSmall,
                   color: AppColors.textHint,
@@ -229,7 +230,7 @@ class HomePage extends GetView<HomeController> {
               ),
               SizedBox(width: AppSizes.spaceTiny),
               Text(
-                '${post['commentCount']}',
+                '${post.commentCount}',
                 style: TextStyle(
                   fontSize: AppSizes.fontSmall,
                   color: AppColors.textHint,
@@ -237,7 +238,7 @@ class HomePage extends GetView<HomeController> {
               ),
               const Spacer(),
               Text(
-                post['timeAgo'],
+                post.timeAgo,
                 style: TextStyle(
                   fontSize: AppSizes.fontSmall,
                   color: AppColors.textHint,

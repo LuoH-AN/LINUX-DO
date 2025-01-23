@@ -28,7 +28,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   #转换
-  retrofit: ^4.4.0
+  retrofit: ^4.0.3
   #网络
   dio: ^5.4.0
   #状态管理
@@ -62,15 +62,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^2.0.0
-  retrofit_generator: '>=8.0.0 <10.0.0'
-  build_runner: ^2.3.3
-  json_serializable: ^6.8.0
+  retrofit_generator: ^8.0.6
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
