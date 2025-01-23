@@ -22,7 +22,7 @@ mixin ToastMixin {
   }
 
   /// 显示成功toast
-  void showSuccessToast(String message) {
+  void showSuccess(String message) {
     showToast(
       message,
       backgroundColor: Colors.green,
@@ -30,7 +30,7 @@ mixin ToastMixin {
   }
 
   /// 显示错误toast
-  void showErrorToast(String message) {
+  void showError(String message) {
     showToast(
       message,
       backgroundColor: Colors.red,
@@ -38,7 +38,7 @@ mixin ToastMixin {
   }
 
   /// 显示警告toast
-  void showWarningToast(String message) {
+  void showWarning(String message) {
     showToast(
       message,
       backgroundColor: Colors.orange,

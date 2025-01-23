@@ -1,6 +1,9 @@
 part of 'app_pages.dart';
 
 abstract class Routes {
+  // 启动页
+  static const STARTUP = '/startup';
+
   // 主页
   static const HOME = '/home';
 

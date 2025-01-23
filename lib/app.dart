@@ -1,4 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'net/api_service.dart';
+import 'utils/inject.dart';
 import 'utils/sp_util.dart';
 import 'utils/device_util.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -24,6 +27,11 @@ class App {
     
     // 初始化屏幕适配
     await ScreenUtil.ensureScreenSize();
+
+    // 初始化API服务
+    final dio = Dio();
+    final apiService = ApiService(dio);
+    Inject.put<ApiService>(apiService);
     
     // 添加网络拦截器
     addInterceptor();

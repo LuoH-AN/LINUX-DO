@@ -1,49 +1,44 @@
-import 'http_client.dart';
-import 'api_response.dart';
+import 'package:dio/dio.dart' hide Headers;
+import 'package:retrofit/retrofit.dart';
+import '../models/topic_model.dart';
 import '../models/post.dart';
+import 'api_response.dart';
+import 'http_config.dart';
 
-class ApiService {
-  static final _client = HttpClient.instance;
+part 'api_service.g.dart';
 
-  /// 获取帖子列表
-  static Future<ApiResponse<List<Post>>> getPosts({
-    int page = 1,
-    int limit = 10,
-  }) async {
-    return await _client.rest.getPosts(page, limit);
-  }
+@RestApi(baseUrl: HttpConfig.baseUrl)
+abstract class ApiService {
+  factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
 
-  /// 获取帖子详情
-  static Future<ApiResponse<Post>> getPostDetail(String id) async {
-    return await _client.rest.getPostDetail(id);
-  }
+  // 获取热门话题
+  @GET("/top.json")
+  Future<TopicListResponse> getTopics();
 
-  /// 创建帖子
-  static Future<ApiResponse<Post>> createPost({
-    required String title,
-    required String content,
-  }) async {
-    return await _client.rest.createPost({
-      'title': title,
-      'content': content,
-    });
-  }
+  // 获取帖子列表
+  @GET("/posts")
+  Future<ApiResponse<List<Post>>> getPosts(
+    @Query("page") int page,
+    @Query("limit") int limit,
+  );
 
-  /// 更新帖子
-  static Future<ApiResponse<Post>> updatePost({
-    required String id,
-    String? title,
-    String? content,
-  }) async {
-    final data = <String, dynamic>{};
-    if (title != null) data['title'] = title;
-    if (content != null) data['content'] = content;
+  // 获取帖子详情
+  @GET("/posts/{id}")
+  Future<ApiResponse<Post>> getPostDetail(@Path("id") String id);
 
-    return await _client.rest.updatePost(id, data);
-  }
+  // 创建帖子
+  @POST("/posts")
+  Future<ApiResponse<Post>> createPost(@Body() Map<String, dynamic> data);
 
-  /// 删除帖子
-  static Future<ApiResponse<void>> deletePost(String id) async {
-    return await _client.rest.deletePost(id);
-  }
+  // 更新帖子
+  @PUT("/posts/{id}")
+  Future<ApiResponse<Post>> updatePost(
+    @Path("id") String id,
+    @Body() Map<String, dynamic> data,
+  );
+
+  // 删除帖子
+  @DELETE("/posts/{id}")
+  @Headers({"Accept": "application/json"})
+  Future<ApiResponse<dynamic>> deletePost(@Path("id") String id);
 }

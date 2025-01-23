@@ -39,10 +39,10 @@ class EncryptUtil {
   /// AES加密
   static String encodeAes(String data, String key) {
     try {
-      final _key = encrypt.Key.fromUtf8(key);
-      final _iv = encrypt.IV.fromLength(16);
-      final encrypter = encrypt.Encrypter(encrypt.AES(_key));
-      final encrypted = encrypter.encrypt(data, iv: _iv);
+      final key0 = encrypt.Key.fromUtf8(key);
+      final iv = encrypt.IV.fromLength(16);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key0));
+      final encrypted = encrypter.encrypt(data, iv: iv);
       return encrypted.base64;
     } catch (e) {
       return data;
@@ -52,10 +52,10 @@ class EncryptUtil {
   /// AES解密
   static String decodeAes(String encrypted, String key) {
     try {
-      final _key = encrypt.Key.fromUtf8(key);
-      final _iv = encrypt.IV.fromLength(16);
-      final encrypter = encrypt.Encrypter(encrypt.AES(_key));
-      final decrypted = encrypter.decrypt64(encrypted, iv: _iv);
+      final key0 = encrypt.Key.fromUtf8(key);
+      final iv = encrypt.IV.fromLength(16);
+      final encrypter = encrypt.Encrypter(encrypt.AES(key0));
+      final decrypted = encrypter.decrypt64(encrypted, iv: iv);
       return decrypted;
     } catch (e) {
       return encrypted;

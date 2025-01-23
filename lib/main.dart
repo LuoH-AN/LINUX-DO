@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 
 import 'app.dart';
 import 'routes/app_pages.dart';
-import 'utils/app_theme.dart';
+import 'const/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

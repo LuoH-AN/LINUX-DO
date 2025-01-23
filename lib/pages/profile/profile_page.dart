@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../utils/app_colors.dart';
-import '../../utils/app_sizes.dart';
+import '../../const/app_colors.dart';
+import '../../const/app_sizes.dart';
 import '../base_page.dart';
 import 'profile_controller.dart';
 

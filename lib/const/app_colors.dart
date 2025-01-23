@@ -16,6 +16,11 @@ class AppColors {
   static const Color primary40 = Color(0x66668CFF); // 40% 透明度
   static const Color primary20 = Color(0x33668CFF); // 20% 透明度
 
+  /// logo的色调
+  static const Color logoColor1 = Color(0xFF1C1C1E);
+  static const Color logoColor2 = Color(0xFFF0F0F0);
+  static const Color logoColor3 = Color(0xFFF3B33F);
+
   /// 文字颜色
   static const Color textPrimary = Color(0xFF333333);
   static const Color textSecondary = Color(0xFF666666);
