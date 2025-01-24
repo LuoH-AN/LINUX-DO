@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,12 +18,11 @@ class TopicsPage extends GetView<TopicsController> {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 120.w,
+            expandedHeight: 140.w,
             pinned: true,
             elevation: 0,
-            backgroundColor: Colors.white,
             leading: IconButton(
-              icon: Icon(Icons.menu, color: Colors.grey[400]),
+              icon: const Icon(Icons.menu_rounded, color: AppColors.white),
               onPressed: () {
                 Scaffold.of(context).openDrawer();
               },
@@ -32,8 +32,7 @@ class TopicsPage extends GetView<TopicsController> {
                 padding: EdgeInsets.only(right: 16.w),
                 child: Image.asset(
                   AppImages.logo,
-                  width: 32.w,
-                  height: 32.w,
+                  width: 64.w,
                 ),
               ),
             ],
@@ -41,25 +40,23 @@ class TopicsPage extends GetView<TopicsController> {
               builder: (BuildContext context, BoxConstraints constraints) {
                 final top = constraints.biggest.height;
                 // 计算折叠进度 (0.0 - 1.0)
-                final collapsedProgress =
-                    ((160.w - top) / (160.w - kToolbarHeight)).clamp(0.0, 1.0);
-
+                final collapsedProgress = ((160.w - top) / (160.w - kToolbarHeight)).clamp(0.0, 1.0);
+                
                 return FlexibleSpaceBar(
                   background: Stack(
                     children: [
                       // 背景图片
                       Container(
-                        margin: EdgeInsets.only(top: 60.w),
+                        margin: EdgeInsets.only(top: 90.w),
                         child: Image.asset(
-                          AppImages.banner,
-                          fit: BoxFit.contain,
-                          width: double.infinity,
-                          height: double.infinity,
-                        ),
-                      ),
+                        AppImages.banner,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        height: double.infinity,
+                      ),),
                       // 展开状态的搜索框
                       Positioned(
-                        bottom: 48.w,
+                        bottom: 24.w,
                         left: 16.w,
                         right: 16.w,
                         child: Opacity(
@@ -68,13 +65,12 @@ class TopicsPage extends GetView<TopicsController> {
                             height: 36.w,
                             padding: EdgeInsets.symmetric(horizontal: 12.w),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: .8),
+                              color: Colors.white.withValues(alpha: .9),
                               borderRadius: BorderRadius.circular(18.w),
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.search,
-                                    color: Colors.grey, size: 18.w),
+                                Icon(Icons.search, color: Colors.grey, size: 18.w),
                                 SizedBox(width: 8.w),
                                 Text(
                                   '搜索话题...',
@@ -95,9 +91,9 @@ class TopicsPage extends GetView<TopicsController> {
                     opacity: collapsedProgress,
                     child: Row(
                       children: [
-                        SizedBox(width: 46.w),
                         IconButton(
-                          icon: Icon(Icons.search, color: Colors.grey[700]),
+                          padding: EdgeInsets.only(top: 20.w,left: 36.w),
+                          icon: const Icon(CupertinoIcons.search_circle, color: AppColors.white),
                           onPressed: () {
                             Get.toNamed(Routes.SEARCH);
                           },
@@ -116,7 +112,7 @@ class TopicsPage extends GetView<TopicsController> {
               padding: EdgeInsets.all(8.w),
               color: AppColors.primary,
               child: Text(
-                AppConst.topInfo,
+                AppConst.slogan.replaceAll('\n', ''),
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 14.w,
@@ -127,14 +123,14 @@ class TopicsPage extends GetView<TopicsController> {
 
           // 帖子列表
           Obx(() => SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    final topic = controller.topics[index];
-                    return _buildTopicItem(topic);
-                  },
-                  childCount: controller.topics.length,
-                ),
-              )),
+            delegate: SliverChildBuilderDelegate(
+              (context, index) {
+                final topic = controller.topics[index];
+                return _buildTopicItem(topic);
+              },
+              childCount: controller.topics.length,
+            ),
+          )),
         ],
       ),
     );
@@ -150,7 +146,7 @@ class TopicsPage extends GetView<TopicsController> {
           BoxShadow(
             color: Colors.black.withValues(alpha: .05),
             blurRadius: 8,
-            offset: const Offset(0, 2),
+            offset: Offset(0, 2),
           ),
         ],
       ),
@@ -176,11 +172,9 @@ class TopicsPage extends GetView<TopicsController> {
                             if (topic.pinned ?? false)
                               Container(
                                 margin: EdgeInsets.only(right: 8.w),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 6.w, vertical: 2.w),
+                                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.w),
                                 decoration: BoxDecoration(
-                                  color:
-                                      AppColors.primary.withValues(alpha: .1),
+                                  color: AppColors.primary.withValues(alpha: .1),
                                   borderRadius: BorderRadius.circular(4.w),
                                 ),
                                 child: Text(
@@ -220,7 +214,7 @@ class TopicsPage extends GetView<TopicsController> {
                               ),
                             ),
                           ),
-
+                        
                         // 标签
                         if (topic.tags != null && topic.tags!.isNotEmpty)
                           Padding(
@@ -231,11 +225,9 @@ class TopicsPage extends GetView<TopicsController> {
                               children: topic.tags!.map((tag) {
                                 final tagColors = controller.getTagColors(tag);
                                 return Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 8.w, vertical: 2.w),
+                                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.w),
                                   decoration: BoxDecoration(
-                                    color: tagColors.backgroundColor
-                                        .withOpacity(0.1),
+                                    color: tagColors.backgroundColor.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(4.w),
                                   ),
                                   child: Text(
@@ -249,7 +241,7 @@ class TopicsPage extends GetView<TopicsController> {
                               }).toList(),
                             ),
                           ),
-
+                        
                         // 底部信息
                         Padding(
                           padding: EdgeInsets.only(top: 8.w),
@@ -278,11 +270,13 @@ class TopicsPage extends GetView<TopicsController> {
                                   color: Colors.grey[600],
                                 ),
                               ),
-                              const Spacer(),
+                              Spacer(),
                               Row(
                                 children: [
-                                  Icon(Icons.reply_rounded,
-                                      size: 14.w, color: Colors.grey[400]),
+                                  Icon(Icons.reply_rounded, 
+                                    size: 14.w, 
+                                    color: Colors.grey[400]
+                                  ),
                                   SizedBox(width: 4.w),
                                   Text(
                                     '${topic.postsCount ?? 0}',
@@ -307,4 +301,4 @@ class TopicsPage extends GetView<TopicsController> {
       ),
     );
   }
-}
+} 
