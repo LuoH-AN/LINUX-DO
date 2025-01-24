@@ -30,4 +30,10 @@ abstract class Routes {
 
   // 注册页面
   static const REGISTER = '/register';
+
+  // 主题详情页
+  static const TOPIC_DETAIL = '/topic/detail';
+
+  // 创建主题页面
+  static const CREATE_TOPIC = '/topic/create';
 }

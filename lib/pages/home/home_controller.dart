@@ -1,33 +1,25 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../controller/base_controller.dart';
-import '../../models/post.dart';
-import '../../net/api_service.dart';
 import '../../models/topic_model.dart';
+import '../../net/api_service.dart';
 import '../../utils/log.dart';
+import '../../routes/app_pages.dart';
 
-class HomeController extends BaseController{
+class HomeController extends BaseController {
   late final ApiService _apiService;
 
   // 当前选中的tab索引
   final RxInt currentTab = 0.obs;
 
   // 帖子列表数据
-  final RxList<Post> posts = <Post>[].obs;
+  final RxList<Topic> topics = <Topic>[].obs;
 
   // 加载状态
   @override
   final RxBool isLoading = false.obs;
 
-  // 是否还有更多数据
-  final RxBool hasMore = true.obs;
-
-  // 当前页码
-  int _page = 1;
-
-  final topics = <Topic>[].obs;
   final isRefreshing = false.obs;
 
   HomeController() {
@@ -44,37 +36,33 @@ class HomeController extends BaseController{
   void onInit() {
     super.onInit();
     fetchTopics();
-    //fetchPosts();
   }
 
   // 切换tab
   void switchTab(int index) {
+    if (index == 2) {
+      // 处理发帖按钮点击
+      Get.toNamed(Routes.CREATE_TOPIC);
+      return;
+    }
     currentTab.value = index;
-    _page = 1;
-    posts.clear();
-    fetchPosts();
+    if (index == 0) {
+      fetchTopics();
+    }
   }
 
-  // 获取帖子列表
-  Future<void> fetchPosts() async {
-    if (isLoading.value || !hasMore.value) return;
+  // 获取话题列表
+  Future<void> fetchTopics() async {
+    if (isLoading.value) return;
 
     try {
       isLoading.value = true;
-      final response = await _apiService.getPosts(_page, 10);
-
-      if (response.isSuccess) {
-        final newPosts = response.data ?? [];
-        posts.addAll(newPosts);
-        hasMore.value = newPosts.length >= 10;
-        _page++;
-      } else {
-        l.e('获取帖子列表失败: ${response.message}');
-        showError(response.message ?? '获取帖子列表失败');
-      }
+      final response = await _apiService.getTopics();
+      topics.value = response.topicList.topics;
+      l.d('获取话题列表成功: ${topics.length} 条数据');
     } catch (e) {
-      l.e('获取帖子列表异常: $e');
-      showError(e.toString());
+      l.e('获取话题列表失败: $e');
+      showError('获取话题列表失败：$e');
     } finally {
       isLoading.value = false;
     }
@@ -84,80 +72,13 @@ class HomeController extends BaseController{
   Future<void> onRefresh() async {
     isRefreshing.value = true;
     try {
-      _page = 1;
-      hasMore.value = true;
-      posts.clear();
-      await fetchPosts();
+      await fetchTopics();
     } finally {
       isRefreshing.value = false;
     }
   }
 
-  // 创建帖子
-  Future<void> createPost(String title, String content) async {
-    try {
-      isLoading.value = true;
-      final response = await _apiService.createPost({
-        'title': title,
-        'content': content,
-      });
-
-      if (response.isSuccess) {
-        l.i('发布帖子成功');
-        showSuccess('发布成功');
-        Get.back(); // 返回列表页
-        onRefresh(); // 刷新列表
-      } else {
-        l.e('发布帖子失败: ${response.message}');
-        showError(response.message ?? '发布失败');
-      }
-    } catch (e) {
-      l.e('发布帖子异常: $e');
-      showError(e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  // 删除帖子
-  Future<void> deletePost(String id) async {
-    try {
-      isLoading.value = true;
-      final response = await _apiService.deletePost(id);
-
-      if (response.isSuccess) {
-        l.i('删除帖子成功');
-        showSuccess('删除成功');
-        posts.removeWhere((post) => post.id == id);
-      } else {
-        l.e('删除帖子失败: ${response.message}');
-        showError(response.message ?? '删除失败');
-      }
-    } catch (e) {
-      l.e('删除帖子异常: $e');
-      showError(e.toString());
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-  // 获取话题列表
-  Future<void> fetchTopics() async {
-    try {
-      isLoading.value = true;
-      final response = await _apiService.getTopics();
-      final topicsList = response.topicList.topics;
-      l.d('获取话题列表成功: ${topicsList.length} 条数据');
-      topics.value = topicsList;
-    } catch (e) {
-      l.e('获取话题列表失败: $e');
-      showError('获取话题列表失败：$e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
-
-   // 获取标签颜色
+  // 获取标签颜色
   ({Color backgroundColor, Color textColor}) getTagColors(String tag) {
     switch (tag) {
       // AI相关
