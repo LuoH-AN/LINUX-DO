@@ -8,10 +8,6 @@ import '../custom/custom_page.dart';
 import '../profile/profile_page.dart';
 import 'home_controller.dart';
 import '../../const/app_colors.dart';
-import '../../const/app_icons.dart';
-import '../../const/app_images.dart';
-import '../base_page.dart';
-import '../../utils/expand/datetime_expand.dart';
 
 class HomePage extends GetView<HomeController> {
   const HomePage({super.key});
@@ -20,21 +16,21 @@ class HomePage extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Obx(() => IndexedStack(
-        index: controller.currentTab.value,
-        children: [
-          TopicsPage(), // 分类帖子
-          MyTopicsPage(), // 我的帖子
-          Container(), // 占位，实际不会显示
-          CustomPage(), // 自定义
-          ProfilePage(), // 我的
-        ],
-      )),
+            index: controller.currentTab.value,
+            children: [
+              const TopicsPage(), // 分类帖子
+              const MyTopicsPage(), // 我的帖子
+              Container(), // 占位，实际不会显示
+              const CustomPage(), // 自定义
+              const ProfilePage(), // 我的
+            ],
+          )),
       bottomNavigationBar: ConvexAppBar(
         style: TabStyle.fixedCircle,
         backgroundColor: Colors.white,
         color: Colors.grey,
         activeColor: AppColors.primary,
-        items: [
+        items: const [
           TabItem(
             icon: Icons.article_outlined,
             title: '帖子',

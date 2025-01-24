@@ -1,12 +1,9 @@
 import 'package:get/get.dart';
-import 'package:dio/dio.dart';
 import '../pages/home/home_page.dart';
-import '../pages/home/home_controller.dart';
 import '../pages/login/login_page.dart';
 import '../pages/login/login_controller.dart';
 import '../pages/startup/startup_controller.dart';
 import '../pages/startup/startup_page.dart';
-import '../net/api_service.dart';
 import '../pages/home/home_binding.dart';
 
 part 'app_routes.dart';

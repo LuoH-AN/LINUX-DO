@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  /// 主色调
+  /// L站 主色调
   static const Color primary = Color(0xFF668CFF);
 
   /// 次要颜色

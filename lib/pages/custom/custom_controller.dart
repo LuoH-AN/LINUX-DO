@@ -15,11 +15,6 @@ class CustomController extends BaseController {
   // 震动
   final RxBool enableVibration = true.obs;
 
-  @override
-  void onInit() {
-    super.onInit();
-    // TODO: 加载用户设置
-  }
 
   // 切换深色模式
   void toggleDarkMode() {

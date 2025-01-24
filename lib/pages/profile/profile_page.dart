@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../const/app_colors.dart';
-import '../../const/app_sizes.dart';
-import '../base_page.dart';
 import 'profile_controller.dart';
 
 class ProfilePage extends GetView<ProfileController> {
@@ -13,11 +10,11 @@ class ProfilePage extends GetView<ProfileController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('我的'),
+        title: const Text('我的'),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               // TODO: 跳转到设置页面
             },
@@ -48,7 +45,7 @@ class ProfilePage extends GetView<ProfileController> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -61,7 +58,7 @@ class ProfilePage extends GetView<ProfileController> {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.grey[200],
-              image: DecorationImage(
+              image: const DecorationImage(
                 image: NetworkImage('https://via.placeholder.com/60'),
                 fit: BoxFit.cover,
               ),
@@ -114,7 +111,7 @@ class ProfilePage extends GetView<ProfileController> {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 8,
-            offset: Offset(0, 2),
+            offset: const Offset(0, 2),
           ),
         ],
       ),
@@ -157,7 +154,7 @@ class ProfilePage extends GetView<ProfileController> {
                 color: Colors.grey[800],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Icon(Icons.chevron_right, size: 24.w, color: Colors.grey[400]),
           ],
         ),

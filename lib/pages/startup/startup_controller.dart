@@ -44,10 +44,6 @@ class StartupController extends BaseController {
 
   final pageController = PageController();
 
-  @override
-  void onReady() {
-    super.onReady();
-  }
 
   void onPageChanged(int index) {
     _currentPage.value = index;

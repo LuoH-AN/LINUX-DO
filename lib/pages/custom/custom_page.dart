@@ -10,7 +10,7 @@ class CustomPage extends GetView<CustomController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('自定义'),
+        title: const Text('自定义'),
         centerTitle: true,
       ),
       body: ListView(
@@ -60,7 +60,7 @@ class CustomPage extends GetView<CustomController> {
               BoxShadow(
                 color: Colors.black.withOpacity(0.05),
                 blurRadius: 8,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ],
           ),
@@ -96,11 +96,11 @@ class CustomPage extends GetView<CustomController> {
                 color: Colors.grey[800],
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Icon(Icons.chevron_right, size: 20.w, color: Colors.grey[400]),
           ],
         ),
       ),
     );
   }
-} 
+}
