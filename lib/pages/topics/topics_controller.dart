@@ -2,15 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controller/base_controller.dart';
 import '../../models/topic_model.dart';
-import '../../net/api_service.dart';
 import '../../utils/log.dart';
-import '../../utils/expand/datetime_expand.dart';
+import 'tab_views/topic_tab_controller.dart';
+import 'tab_views/topic_tab_view.dart';
 
-class TopicsController extends BaseController {
-  late final ApiService _apiService;
+class TopicsController extends BaseController
+    with GetSingleTickerProviderStateMixin {
 
   // 帖子列表数据
   final RxList<Topic> topics = <Topic>[].obs;
+
+  // 保存完整的响应数据
+  final Rx<TopicListResponse?> topicListResponse = Rx<TopicListResponse?>(null);
+
+  // 路径
+  final paths = ['latest', 'new', 'unread', 'unseen', 'top', 'hot'];
+
+  // 简单一些，本地定义tab
+  final tabs = const [
+    Tab(text: '最新'),
+    Tab(text: '新帖'),
+    Tab(text: '未读'),
+    Tab(text: '未看'),
+    Tab(text: '排行'),
+    Tab(text: '热门')
+  ];
 
   // 加载状态
   @override
@@ -18,12 +34,22 @@ class TopicsController extends BaseController {
 
   final isRefreshing = false.obs;
 
+  final scrollController = ScrollController();
+  final isBottomBarVisible = true.obs;
+  var lastScrollPosition = 0.0;
+
+  // Tab控制器
+  late TabController tabController;
+
+  // 各个标签页的控制器
+  final _tabControllers = <String, TopicTabController>{}.obs;
+  final tabViews = <TopicTabView>[].obs;
+
   TopicsController() {
     try {
-      _apiService = Get.find<ApiService>();
+      _initTabViews();
     } catch (e) {
-      l.e('ApiService not initialized');
-      showError('ApiService not initialized');
+      l.e('初始化失败: $e');
       rethrow;
     }
   }
@@ -31,163 +57,65 @@ class TopicsController extends BaseController {
   @override
   void onInit() {
     super.onInit();
-    fetchTopics();
-  }
-
-  // 获取话题列表
-  Future<void> fetchTopics() async {
-    if (isLoading.value) return;
-
-    try {
-      isLoading.value = true;
-      final response = await _apiService.getTopics();
-      topics.value = response.topicList.topics;
-      l.d('获取话题列表成功: ${topics.length} 条数据');
-    } catch (e) {
-      l.e('获取话题列表失败: $e');
-      showError('获取话题列表失败：$e');
-    } finally {
-      isLoading.value = false;
+    tabController = TabController(length: tabs.length, vsync: this);
+    tabController.addListener(_handleTabChange);
+    _setupScrollController();
+    // 初始化所有tab的controller
+    for (final path in paths) {
+      _initTabController(path);
     }
   }
 
-  // 刷新数据
-  Future<void> onRefresh() async {
-    isRefreshing.value = true;
-    try {
-      await fetchTopics();
-    } finally {
-      isRefreshing.value = false;
+  void _initTabViews() {
+    // 只创建TabView,不初始化controller
+    for (final path in paths) {
+      tabViews.add(TopicTabView(path: path));
     }
   }
 
-  // 点击话题
-  void onTopicTap(Topic topic) {
-    // TODO: 实现话题详情页面跳转
-    l.d('点击话题: ${topic.title}');
+  void _handleTabChange() {
+    if (!tabController.indexIsChanging) return;
+    final path = paths[tabController.index];
+    _initTabController(path);
   }
 
-  // 获取相对时间
-  String getRelativeTime(Topic topic) {
-    final time = topic.bumpedAt ?? topic.lastPostedAt ?? topic.createdAt;
-    if (time == null) return '';
-    return DateTime.parse(time).friendlyDateTime;
+  void _initTabController(String path) {
+    // 如果controller已经存在，不需要重新创建
+    if (_tabControllers.containsKey(path)) return;
+
+    final controller = TopicTabController(path: path);
+    _tabControllers[path] = controller;
+    Get.put(controller, tag: path);
   }
 
-  // 获取标签颜色
-  ({Color backgroundColor, Color textColor}) getTagColors(String tag) {
-    switch (tag) {
-      // AI相关
-      case '人工智能':
-      case 'ChatGPT':
-      case 'OpenAI':
-      case 'Claude':
-      case 'Copilot':
-        return (
-          backgroundColor: const Color(0xFF2196F3), // 蓝色
-          textColor: const Color(0xFF2196F3),
-        );
-      
-      // 技术相关
-      case '软件开发':
-      case 'GitHub':
-      case '算法':
-      case '计算机网络':
-        return (
-          backgroundColor: const Color(0xFF009688), // 青色
-          textColor: const Color(0xFF009688),
-        );
+  void _setupScrollController() {
+    scrollController.addListener(() {
+      final currentPosition = scrollController.position.pixels;
+      // 判断滚动方向和距离
+      if ((currentPosition - lastScrollPosition).abs() > 50) {
+        if (currentPosition > lastScrollPosition && isBottomBarVisible.value) {
+          // 向上滚动，隐藏底部栏
+          isBottomBarVisible.value = false;
+        } else if (currentPosition < lastScrollPosition &&
+            !isBottomBarVisible.value) {
+          // 向下滚动，显示底部栏
+          isBottomBarVisible.value = true;
+        }
+        lastScrollPosition = currentPosition;
+      }
+    });
+  }
 
-      // 服务器相关
-      case 'VPS':
-      case 'Cloudflare':
-      case 'Serv00':
-        return (
-          backgroundColor: const Color(0xFF607D8B), // 蓝灰色
-          textColor: const Color(0xFF607D8B),
-        );
-
-      // 娱乐相关
-      case '游戏':
-      case '影视':
-      case '动漫':
-      case '音乐':
-        return (
-          backgroundColor: const Color(0xFFFF9800), // 橙色
-          textColor: const Color(0xFFFF9800),
-        );
-
-      // 资源相关
-      case '夸克网盘':
-      case '求资源':
-      case 'AFF':
-        return (
-          backgroundColor: const Color(0xFF795548), // 棕色
-          textColor: const Color(0xFF795548),
-        );
-
-      // 生活相关
-      case '职场':
-      case '旅行':
-      case '圆圆满满':
-      case '晒年味':
-        return (
-          backgroundColor: const Color(0xFF8BC34A), // 浅绿色
-          textColor: const Color(0xFF8BC34A),
-        );
-
-      // 特殊标签
-      case '快问快答':
-        return (
-          backgroundColor: const Color(0xFF1976D2), // 深蓝色
-          textColor: const Color(0xFF1976D2),
-        );
-      case '纯水':
-        return (
-          backgroundColor: const Color(0xFF4CAF50), // 绿色
-          textColor: const Color(0xFF4CAF50),
-        );
-      case '病友':
-        return (
-          backgroundColor: const Color(0xFFF44336), // 红色
-          textColor: const Color(0xFFF44336),
-        );
-      case '树洞':
-        return (
-          backgroundColor: const Color(0xFF9C27B0), // 紫色
-          textColor: const Color(0xFF9C27B0),
-        );
-      
-      // 专业领域
-      case '网络安全':
-        return (
-          backgroundColor: const Color(0xFFE91E63), // 粉色
-          textColor: const Color(0xFFE91E63),
-        );
-      case '金融经济':
-        return (
-          backgroundColor: const Color(0xFF673AB7), // 深紫色
-          textColor: const Color(0xFF673AB7),
-        );
-      case '配置优化':
-        return (
-          backgroundColor: const Color(0xFF3F51B5), // 靛蓝色
-          textColor: const Color(0xFF3F51B5),
-        );
-      
-      // 活动
-      case '抽奖':
-        return (
-          backgroundColor: const Color(0xFFFF4081), // 粉红色
-          textColor: const Color(0xFFFF4081),
-        );
-
-      // 默认颜色
-      default:
-        return (
-          backgroundColor: Colors.grey,
-          textColor: Colors.grey,
-        );
+  @override
+  void onClose() {
+    scrollController.dispose();
+    tabController.removeListener(_handleTabChange);
+    tabController.dispose();
+    // 清理所有controller
+    for (final controller in _tabControllers.values) {
+      Get.delete<TopicTabController>(tag: controller.path);
     }
+    _tabControllers.clear();
+    super.onClose();
   }
-} 
+}

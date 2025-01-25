@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:linux_do/const/app_const.dart';
 
 import '../utils/mixins/toast_mixin.dart';
 
@@ -36,7 +37,7 @@ class BaseController extends GetxController with ToastMixin {
       clearError();
       return await task();
     } catch (e) {
-      setError(e.toString());
+      setError(AppConst.stateHint.error);
       return null;
     } finally {
       setLoading(false);

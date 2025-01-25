@@ -42,7 +42,7 @@ class LoginPage extends BasePage<LoginController> {
               children: [
                 Center(
                   child: Image.asset(
-                    AppImages.logo,
+                    AppImages.getLogo(context),
                     width: 200.w,
                   ),
                 ),

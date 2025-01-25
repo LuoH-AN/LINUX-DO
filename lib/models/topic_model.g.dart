@@ -17,7 +17,9 @@ TopicListResponse _$TopicListResponseFromJson(Map<String, dynamic> json) =>
       flairGroups: (json['flairGroups'] as List<dynamic>?)
           ?.map((e) => FlairGroup.fromJson(e as Map<String, dynamic>))
           .toList(),
-      topicList: TopicList.fromJson(json['topic_list'] as Map<String, dynamic>),
+      topicList: json['topic_list'] == null
+          ? null
+          : TopicList.fromJson(json['topic_list'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TopicListResponseToJson(TopicListResponse instance) =>
@@ -181,6 +183,7 @@ Poster _$PosterFromJson(Map<String, dynamic> json) => Poster(
       userId: (json['user_id'] as num?)?.toInt(),
       primaryGroupId: (json['primary_group_id'] as num?)?.toInt(),
       flairGroupId: (json['flair_group_id'] as num?)?.toInt(),
+      avatarTemplate: json['avatar_template'] as String?,
     );
 
 Map<String, dynamic> _$PosterToJson(Poster instance) => <String, dynamic>{
@@ -189,4 +192,5 @@ Map<String, dynamic> _$PosterToJson(Poster instance) => <String, dynamic>{
       'user_id': instance.userId,
       'primary_group_id': instance.primaryGroupId,
       'flair_group_id': instance.flairGroupId,
+      'avatar_template': instance.avatarTemplate,
     };

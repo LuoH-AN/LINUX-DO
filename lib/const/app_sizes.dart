@@ -1,14 +1,15 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// 尺寸常量
 class AppSizes {
   /// 文字大小
-  static double get fontTiny => 10.sp;
-  static double get fontSmall => 12.sp;
-  static double get fontNormal => 14.sp;
-  static double get fontMedium => 16.sp;
-  static double get fontLarge => 18.sp;
-  static double get fontHuge => 20.sp;
-  static double get fontGiant => 24.sp;
+  static double get fontTiny => 10.w;
+  static double get fontSmall => 12.w;
+  static double get fontNormal => 14.w;
+  static double get fontMedium => 16.w;
+  static double get fontLarge => 18.w;
+  static double get fontHuge => 20.w;
+  static double get fontGiant => 24.w;
 
   /// 间距
   static double get spaceTiny => 4.w;

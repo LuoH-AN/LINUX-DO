@@ -20,30 +20,43 @@ class Spacing {
   const Spacing._();
   
   // 基础间距
-  static double get xs => 4.w;
-  static double get sm => 8.w;
-  static double get md => 16.w;
-  static double get lg => 24.w;
-  static double get xl => 32.w;
-  
-  // 常用边距
-  static EdgeInsets get padding => EdgeInsets.all(md);
-  static EdgeInsets get paddingH => EdgeInsets.symmetric(horizontal: md);
-  static EdgeInsets get paddingV => EdgeInsets.symmetric(vertical: md);
-  static EdgeInsets get paddingSm => EdgeInsets.all(sm);
-  static EdgeInsets get paddingLg => EdgeInsets.all(lg);
-  
-  // 水平间距
-  static Widget get h4 => xs.hGap;
-  static Widget get h8 => sm.hGap;
-  static Widget get h16 => md.hGap;
-  static Widget get h24 => lg.hGap;
-  static Widget get h32 => xl.hGap;
-  
-  // 垂直间距
-  static Widget get v4 => xs.vGap;
-  static Widget get v8 => sm.vGap;
-  static Widget get v16 => md.vGap;
-  static Widget get v24 => lg.vGap;
-  static Widget get v32 => xl.vGap;
+  static double get sc1 => 1.w;
+  static double get sc2 => 2.w;
+  static double get sc3 => 3.w;
+  static double get sc4 => 4.w;
+  static double get sc5 => 5.w;
+  static double get sc6 => 6.w;
+  static double get sc7 => 7.w;
+  static double get sc8 => 8.w;
+  static double get sc9 => 9.w;
+  static double get sc10 => 10.w;
+  static double get sc11 => 11.w;
+  static double get sc12 => 12.w;
+  static double get sc13 => 13.w;
+  static double get sc14 => 14.w;
+  static double get sc15 => 15.w;
+  static double get sc16 => 16.w;
+  static double get sc17 => 17.w;
+  static double get sc18 => 18.w;
+  static double get sc19 => 19.w;
+  static double get sc20 => 20.w;
+  static double get sc21 => 21.w;
+  static double get sc22 => 22.w;
+  static double get sc23 => 23.w;
+  static double get sc24 => 24.w;
+  static double get sc25 => 25.w;
+  static double get sc26 => 26.w;
+  static double get sc27 => 27.w;
+  static double get sc28 => 28.w;
+  static double get sc29 => 29.w;
+  static double get sc30 => 30.w;
+  static double get sc31 => 31.w;
+  static double get sc32 => 32.w;
+
+  // 常用别名
+  static double get xs => sc4;    // 超小间距
+  static double get sm => sc8;    // 小间距
+  static double get md => sc16;   // 中间距
+  static double get lg => sc24;   // 大间距
+  static double get xl => sc32;   // 超大间距
 }

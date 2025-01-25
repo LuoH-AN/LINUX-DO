@@ -1,0 +1,74 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class Tag {
+  static final Map<String, TagColor> _cache = {};
+  
+  // 预定义的颜色列表 主要tag太多了
+  static const List<Color> _baseColors = [
+    Color(0xFF1976D2),
+    Color(0xFF388E3C),
+    Color(0xFFF57C00),
+    Color(0xFF7B1FA2),
+    Color(0xFFC2185B),
+    Color(0xFF0097A7),
+    Color(0xFF00796B),
+    Color(0xFF3F51B5),
+    Color(0xFF689F38),
+    Color(0xFFE64A19),
+  ];
+
+  // 获取标签颜色
+  static TagColor getTagColors(String tag) {
+    if (_cache.containsKey(tag)) {
+      return _cache[tag]!;
+    }
+
+    final int hashCode = tag.hashCode.abs();
+    final int colorIndex = hashCode % _baseColors.length;
+    final baseColor = _baseColors[colorIndex];
+    
+    // 创建新的标签颜色
+    final tagColor = TagColor(
+      textColor: baseColor,
+      backgroundColor: baseColor.withValues(alpha: .1),
+    );
+    
+    // 缓存结果
+    _cache[tag] = tagColor;
+    
+    return tagColor;
+  }
+
+  // 从 JSON 文件加载所有标签并初始化颜色
+  static Future<void> initializeFromJson() async {
+    try {
+      final String jsonString = await rootBundle.loadString('assets/json/tags.json');
+      final Map<String, dynamic> jsonData = json.decode(jsonString);
+      final List<dynamic> tags = jsonData['tags'];
+      
+      for (var tag in tags) {
+        final String tagId = tag['id'];
+        getTagColors(tagId); // 生成并缓存颜色
+      }
+    } catch (e) {
+      debugPrint('Error loading tags: $e');
+    }
+  }
+
+  // 清除缓存
+  static void clearCache() {
+    _cache.clear();
+  }
+}
+
+class TagColor {
+  final Color textColor;
+  final Color backgroundColor;
+
+  const TagColor({
+    required this.textColor,
+    required this.backgroundColor,
+  });
+} 

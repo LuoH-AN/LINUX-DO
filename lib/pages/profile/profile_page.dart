@@ -24,26 +24,26 @@ class ProfilePage extends GetView<ProfileController> {
       body: ListView(
         children: [
           // 用户信息卡片
-          _buildUserCard(),
+          _buildUserCard(context),
           SizedBox(height: 16.w),
           // 功能列表
-          _buildFunctionList(),
+          _buildFunctionList(context),
         ],
       ),
     );
   }
 
   // 用户信息卡片
-  Widget _buildUserCard() {
+  Widget _buildUserCard(BuildContext context) {
     return Container(
       margin: EdgeInsets.all(16.w),
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12.w),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: .05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -57,11 +57,11 @@ class ProfilePage extends GetView<ProfileController> {
             height: 60.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey[200],
-              image: const DecorationImage(
-                image: NetworkImage('https://via.placeholder.com/60'),
-                fit: BoxFit.cover,
-              ),
+              color: Theme.of(context).dividerColor.withValues(alpha: .1),
+            ),
+            child: Icon(
+              Icons.person_outline,
+              color: Theme.of(context).iconTheme.color,
             ),
           ),
           SizedBox(width: 16.w),
@@ -75,6 +75,7 @@ class ProfilePage extends GetView<ProfileController> {
                   style: TextStyle(
                     fontSize: 18.w,
                     fontWeight: FontWeight.bold,
+                    color: Theme.of(context).textTheme.titleLarge?.color,
                   ),
                 ),
                 SizedBox(height: 4.w),
@@ -82,7 +83,7 @@ class ProfilePage extends GetView<ProfileController> {
                   '这个人很懒，什么都没有写...',
                   style: TextStyle(
                     fontSize: 14.w,
-                    color: Colors.grey[600],
+                    color: Theme.of(context).textTheme.bodyMedium?.color,
                   ),
                 ),
               ],
@@ -90,7 +91,7 @@ class ProfilePage extends GetView<ProfileController> {
           ),
           // 编辑按钮
           IconButton(
-            icon: Icon(Icons.edit, color: Colors.grey[400]),
+            icon: Icon(Icons.edit, color: Theme.of(context).iconTheme.color?.withValues(alpha: .5)),
             onPressed: () {
               // TODO: 编辑个人信息
             },
@@ -101,15 +102,15 @@ class ProfilePage extends GetView<ProfileController> {
   }
 
   // 功能列表
-  Widget _buildFunctionList() {
+  Widget _buildFunctionList(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12.w),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: .05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -117,45 +118,54 @@ class ProfilePage extends GetView<ProfileController> {
       ),
       child: Column(
         children: [
-          _buildFunctionItem('我的收藏', Icons.favorite_border, () {}),
-          _buildFunctionItem('浏览历史', Icons.history, () {}),
-          _buildFunctionItem('我的评论', Icons.comment_outlined, () {}),
-          _buildFunctionItem('我的点赞', Icons.thumb_up_outlined, () {}),
-          _buildFunctionItem('消息通知', Icons.notifications_none, () {}),
-          _buildFunctionItem('帮助反馈', Icons.help_outline, () {}),
-          _buildFunctionItem('关于我们', Icons.info_outline, () {}),
+          _buildFunctionItem(context, '我的收藏', Icons.favorite_border, () {}),
+          _buildFunctionItem(context, '浏览历史', Icons.history, () {}),
+          _buildFunctionItem(context, '我的评论', Icons.comment_outlined, () {}),
+          _buildFunctionItem(context, '我的点赞', Icons.thumb_up_outlined, () {}),
+          _buildFunctionItem(context, '消息通知', Icons.notifications_none, () {}),
+          _buildFunctionItem(context, '帮助反馈', Icons.help_outline, () {}),
+          _buildFunctionItem(context, '关于我们', Icons.info_outline, () {}),
         ],
       ),
     );
   }
 
   // 功能列表项
-  Widget _buildFunctionItem(String title, IconData icon, VoidCallback onTap) {
+  Widget _buildFunctionItem(BuildContext context, String title, IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.w),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: Colors.grey[200]!,
+              color: Theme.of(context).dividerColor.withOpacity(0.1),
               width: 0.5,
             ),
           ),
         ),
         child: Row(
           children: [
-            Icon(icon, size: 24.w, color: Colors.grey[600]),
+            Icon(
+              icon,
+              size: 24.w,
+              color: Theme.of(context).iconTheme.color,
+            ),
             SizedBox(width: 12.w),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16.w,
-                color: Colors.grey[800],
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 14.w,
+                  color: Theme.of(context).textTheme.bodyMedium?.color,
+                ),
               ),
             ),
-            const Spacer(),
-            Icon(Icons.chevron_right, size: 24.w, color: Colors.grey[400]),
+            Icon(
+              Icons.chevron_right,
+              size: 20.w,
+              color: Theme.of(context).iconTheme.color?.withValues(alpha: .5),
+            ),
           ],
         ),
       ),

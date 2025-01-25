@@ -12,8 +12,8 @@ abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
 
   // 获取热门话题
-  @GET("/top.json")
-  Future<TopicListResponse> getTopics();
+  @GET("/{path}.json")
+  Future<TopicListResponse> getTopics(@Path('path') String path);
 
   // 获取帖子列表
   @GET("/posts")

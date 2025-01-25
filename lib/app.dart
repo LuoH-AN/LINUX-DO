@@ -1,10 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'net/api_service.dart';
+import 'utils/user_cache.dart';
 import 'utils/inject.dart';
 import 'utils/sp_util.dart';
 import 'utils/device_util.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import 'utils/tag.dart';
 
 class App {
   static final App _instance = App.singleton();
@@ -17,24 +20,29 @@ class App {
 
   /// 初始化App
   static Future<void> initial() async {
+    // 初始化Flutter
     WidgetsFlutterBinding.ensureInitialized();
-    
+
     // 初始化SharedPreferences
     await SpUtil.init();
-    
+
     // 初始化设备信息
     await DeviceUtil.init();
-    
+
     // 初始化屏幕适配
     await ScreenUtil.ensureScreenSize();
 
     // 初始化API服务
-    final dio = Dio();
-    final apiService = ApiService(dio);
-    Inject.put<ApiService>(apiService);
-    
+    Inject.put<ApiService>(ApiService(Dio()));
+
     // 添加网络拦截器
     addInterceptor();
+
+    // Tag的颜色
+    Tag.initializeFromJson();
+
+    // 测试
+    // UserCache().clear();
   }
 
   /// 添加网络拦截器

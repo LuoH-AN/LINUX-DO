@@ -8,17 +8,25 @@ class TopicListResponse {
   final List<Group>? primaryGroups;
   final List<FlairGroup>? flairGroups;
   @JsonKey(name: 'topic_list')
-  final TopicList topicList;
+  final TopicList? topicList;
 
-  TopicListResponse({
+  const TopicListResponse({
     this.users,
     this.primaryGroups,
     this.flairGroups,
-    required this.topicList,
+    this.topicList,
   });
 
   factory TopicListResponse.fromJson(Map<String, dynamic> json) => _$TopicListResponseFromJson(json);
   Map<String, dynamic> toJson() => _$TopicListResponseToJson(this);
+
+  // 根据用户ID获取用户
+  User? findUserById(int userId) {
+    return users?.firstWhere(
+      (user) => user.id == userId,
+      orElse: () => User(id: 0, username: '', name: '', avatarTemplate: ''),
+    );
+  }
 }
 
 @JsonSerializable()
@@ -171,7 +179,7 @@ class Topic {
   final bool? hasAcceptedAnswer;
   final List<Poster>? posters;
 
-  Topic({
+  const Topic({
     required this.id,
     this.title,
     this.fancyTitle,
@@ -206,6 +214,24 @@ class Topic {
 
   factory Topic.fromJson(Map<String, dynamic> json) => _$TopicFromJson(json);
   Map<String, dynamic> toJson() => _$TopicToJson(this);
+
+  // 获取最新发帖人的ID
+  int? getLatestPosterId() {
+    final latestPoster = posters?.firstWhere(
+      (poster) => poster.extras == 'latest',
+      orElse: () => Poster(userId: 0, extras: ''),
+    );
+    return latestPoster?.userId;
+  }
+
+  // 获取原始发帖人的ID
+  int? getOriginalPosterId() {
+    final latestPoster = posters?.firstWhere(
+      (poster) => poster.description?.contains('原始发帖人') ?? false,
+      orElse: () => Poster(userId: 0, extras: ''),
+    );
+    return latestPoster?.userId;
+  }
 }
 
 @JsonSerializable()
@@ -218,6 +244,8 @@ class Poster {
   final int? primaryGroupId;
   @JsonKey(name: 'flair_group_id')
   final int? flairGroupId;
+  @JsonKey(name: 'avatar_template')
+  final String? avatarTemplate;
 
   Poster({
     this.extras,
@@ -225,6 +253,7 @@ class Poster {
     this.userId,
     this.primaryGroupId,
     this.flairGroupId,
+    this.avatarTemplate,
   });
 
   factory Poster.fromJson(Map<String, dynamic> json) => _$PosterFromJson(json);

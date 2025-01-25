@@ -24,7 +24,7 @@ class _ApiService implements ApiService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<TopicListResponse> getTopics() async {
+  Future<TopicListResponse> getTopics(String path) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
@@ -36,7 +36,7 @@ class _ApiService implements ApiService {
     )
         .compose(
           _dio.options,
-          '/top.json',
+          '/${path}.json',
           queryParameters: queryParameters,
           data: _data,
         )

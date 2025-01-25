@@ -2,19 +2,25 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   /// L站 主色调
-  static const Color primary = Color(0xFF668CFF);
+  static const Color primary = Color(0xFF1976D2);
+
+  /// L站 亮色
+  static const Color primaryLight = Color(0xFF1976D2);
 
   /// 次要颜色
-  static const Color secondary = Color(0xFFD1DDFF);
+  static const Color secondary = Color(0xFFD7EFFD);
+
+  /// 次要颜色 2
+  static const Color secondary2 = Color(0xFF4EABF8);
 
   /// 背景色
-  static const Color background = Color(0xFFE6E6E6);
+  static const Color background = Color(0xFFF5F5F5);
 
   /// 主色调不同透明度
-  static const Color primary80 = Color(0xCC668CFF); // 80% 透明度
-  static const Color primary60 = Color(0x99668CFF); // 60% 透明度
-  static const Color primary40 = Color(0x66668CFF); // 40% 透明度
-  static const Color primary20 = Color(0x33668CFF); // 20% 透明度
+  static const Color primary80 = Color(0xCC1976D2); // 80% 透明度
+  static const Color primary60 = Color(0x991976D2); // 60% 透明度
+  static const Color primary40 = Color(0x661976D2); // 40% 透明度
+  static const Color primary20 = Color(0x331976D2); // 20% 透明度
 
   /// logo的色调
   static const Color logoColor1 = Color(0xFF1C1C1E);
@@ -36,20 +42,81 @@ class AppColors {
   static const Color shadow = Color(0x1A000000);
 
   /// 成功状态颜色
-  static const Color success = Color(0xFF52C41A);
+  static const Color success = Color(0xFF4CAF50);
 
   /// 警告状态颜色
-  static const Color warning = Color(0xFFFAAD14);
+  static const Color warning = Color(0xFFFFA726);
 
   /// 错误状态颜色
-  static const Color error = Color(0xFFFF4D4F);
+  static const Color error = Color(0xFFE57373);
 
   /// 禁用状态颜色
   static const Color disabled = Color(0xFFBFBFBF);
 
   /// 白色
-  static const Color white = Color(0xFFFFFFFF);
+  static const Color white = Colors.white;
 
   /// 黑色
-  static const Color black = Color(0xFF000000);
+  static const Color black = Colors.black;
+
+  /// 透明色
+  static const Color transparent = Colors.transparent;
+
+  /// 亮色主题颜色
+  static final light = _Colors(
+    background: const Color(0xFFF5F5F5),
+    surface: Colors.white,
+    card: Colors.white,
+    divider: Colors.grey.shade200,
+    text: Colors.black87,
+    textSecondary: Colors.black54,
+    textHint: Colors.black38,
+    icon: Colors.black87,
+    iconSecondary: Colors.black54,
+    shadow: Colors.black.withValues(alpha: .1),
+    inputFillColor: textHint,
+  );
+
+  /// 深色主题颜色
+  static final dark = _Colors(
+    background: const Color(0xFF121212),
+    surface: const Color(0xFF1E1E1E),
+    card: const Color(0xFF242424),
+    divider: Colors.white10,
+    text: Colors.white,
+    textSecondary: Colors.white70,
+    textHint: Colors.white38,
+    icon: Colors.white,
+    iconSecondary: Colors.white70,
+    shadow: Colors.white.withValues(alpha: .1),
+    inputFillColor: textHint,
+  );
+}
+
+class _Colors {
+  final Color background;    // 背景色
+  final Color surface;       // 表面色
+  final Color card;         // 卡片色
+  final Color divider;      // 分割线颜色
+  final Color text;         // 主文本色
+  final Color textSecondary; // 次要文本色
+  final Color textHint;     // 提示文本色
+  final Color icon;         // 图标色
+  final Color iconSecondary; // 次要图标色
+  final Color shadow;       // 阴影色
+  final Color inputFillColor; // 输入框填充色
+
+  const _Colors({
+    required this.background,
+    required this.surface,
+    required this.card,
+    required this.divider,
+    required this.text,
+    required this.textSecondary,
+    required this.textHint,
+    required this.icon,
+    required this.iconSecondary,
+    required this.shadow,
+    required this.inputFillColor,
+  });
 }

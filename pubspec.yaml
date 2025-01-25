@@ -27,6 +27,9 @@ dependencies:
     
   cupertino_icons: ^1.0.2
 
+  # 图片加载
+  cached_network_image: ^3.3.1
+
   #转换
   retrofit: ^4.0.3
   #网络
@@ -35,7 +38,7 @@ dependencies:
   get: ^4.6.6
   #屏幕适配
   flutter_screenutil: ^5.9.3
-    #logger:
+  #logger:
   logger: ^2.5.0
   #Json解析注解
   json_annotation: ^4.8.1
@@ -56,8 +59,16 @@ dependencies:
   encrypt: ^5.0.3
   # 文件操作
   path_provider: ^2.1.1
+
   mime: ^1.0.4
+
   convex_bottom_bar: ^3.2.0
+
+  flutter_slidable: ^3.0.1
+
+  pull_to_refresh: ^2.0.0
+
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
@@ -74,6 +85,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/light/
+    - assets/images/dark/
   fonts:
     - family: DINPro
       fonts:
