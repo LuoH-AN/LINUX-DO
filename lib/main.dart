@@ -90,13 +90,11 @@ class MyApp extends StatelessWidget {
               ));
             }
 
-            return SafeArea(
-              child: GestureDetector(
+            return GestureDetector(
                 // 点击空白处收起键盘
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                 child: child!,
-              ),
-            );
+              );
           },
         );
       },

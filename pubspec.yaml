@@ -46,7 +46,7 @@ dependencies:
   # 权限处理
   permission_handler: ^11.1.0
   # 网络状态
-  connectivity_plus: ^5.0.2
+  # connectivity_plus: 4.0.2
   # 设备信息
   device_info_plus: ^9.1.1
   # 包信息
