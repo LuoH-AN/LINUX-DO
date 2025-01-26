@@ -3,13 +3,14 @@ import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../controller/base_controller.dart';
 import '../../models/topic_model.dart';
+import '../../routes/app_pages.dart';
 
 class MyTopicsController extends BaseController {
   // 加载状态
   final isLoading = true.obs;
   final isRefreshing = false.obs;
   final isLoadingMore = false.obs;
-  
+
   // 数据
   final topics = <Topic>[].obs;
   final hasMore = true.obs;
@@ -37,12 +38,12 @@ class MyTopicsController extends BaseController {
       isLoading.value = true;
       // 模拟网络请求延迟
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // TODO: 实际的API调用
       // final response = await _apiService.getMyTopics(page: 1);
       // topics.value = response.topics;
       // hasMore.value = response.hasMore;
-      
+
       // 模拟数据
       topics.value = List.generate(10, (index) => Topic(id: index));
       hasMore.value = true;
@@ -59,12 +60,12 @@ class MyTopicsController extends BaseController {
     try {
       isRefreshing.value = true;
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // TODO: 实际的API调用
       // final response = await _apiService.getMyTopics(page: 1);
       // topics.value = response.topics;
       // hasMore.value = response.hasMore;
-      
+
       // 模拟刷新数据
       topics.value = List.generate(10, (index) => Topic(id: index + 100));
       hasMore.value = true;
@@ -88,17 +89,18 @@ class MyTopicsController extends BaseController {
     try {
       isLoadingMore.value = true;
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // TODO: 实际的API调用
       // final response = await _apiService.getMyTopics(page: currentPage.value + 1);
       // topics.addAll(response.topics);
       // hasMore.value = response.hasMore;
-      
+
       // 模拟加载更多数据
-      final moreTopics = List.generate(10, (index) => Topic(id: index + topics.length));
+      final moreTopics =
+          List.generate(10, (index) => Topic(id: index + topics.length));
       topics.addAll(moreTopics);
       currentPage.value++;
-      
+
       // 模拟没有更多数据的情况
       if (currentPage.value >= 3) {
         hasMore.value = false;
@@ -112,5 +114,10 @@ class MyTopicsController extends BaseController {
     } finally {
       isLoadingMore.value = false;
     }
+  }
+
+  // 跳转到帖子详情
+  void toTopicDetail(int id) {
+    Get.toNamed(Routes.TOPIC_DETAIL, arguments: id);
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'dart:math' as math;
 
 mixin AnimationMixin {
@@ -44,7 +43,8 @@ mixin AnimationMixin {
   }
 
   // 计算错峰动画的偏移
-  double calculatePhaseOffset(double controllerValue, int index, {double phaseStep = 0.15}) {
+  double calculatePhaseOffset(double controllerValue, int index,
+      {double phaseStep = 0.15}) {
     return (controllerValue + index * phaseStep) % 1.0;
   }
 
@@ -52,4 +52,4 @@ mixin AnimationMixin {
   double calculateSineOffset(double progress, {double amplitude = 6.0}) {
     return math.sin(progress * 2 * math.pi) * amplitude;
   }
-} 
+}

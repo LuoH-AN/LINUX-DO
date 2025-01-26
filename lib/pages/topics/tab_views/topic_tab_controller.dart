@@ -3,6 +3,7 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../controller/base_controller.dart';
 import '../../../models/topic_model.dart';
 import '../../../net/api_service.dart';
+import '../../../routes/app_pages.dart';
 import '../../../utils/log.dart';
 import '../../../utils/user_cache.dart';
 
@@ -117,22 +118,21 @@ class TopicTabController extends BaseController
     }
   }
 
-  // 点击话题
-  void onTopicTap(Topic topic) {
-    // TODO: 实现话题详情页面跳转
-    l.d('点击话题: ${topic.title}');
+  // 跳转到帖子详情
+  void toTopicDetail(int id) {
+    Get.toNamed(Routes.TOPIC_DETAIL, arguments: id);
   }
 
   // 获取最新发帖人头像
   String? getLatestPosterAvatar(Topic topic) {
-    final latestPosterId = topic.getLatestPosterId();
+    final latestPosterId = topic.getOriginalPosterId();
     if (latestPosterId == null) return null;
     return _userCache.getAvatarUrl(latestPosterId);
   }
 
   // 获取昵称
   String? getNickName(Topic topic) {
-    final latestPosterId = topic.getLatestPosterId();
+    final latestPosterId = topic.getOriginalPosterId();
     if (latestPosterId == null) return null;
     return _userCache.getUserName(latestPosterId);
   }

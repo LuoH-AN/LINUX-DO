@@ -3,7 +3,6 @@ import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import '../../controller/base_controller.dart';
 import '../../models/topic_model.dart';
-import '../../utils/log.dart';
 import 'tab_views/topic_tab_controller.dart';
 import 'tab_views/topic_tab_view.dart';
 
@@ -75,15 +74,7 @@ class TopicsController extends BaseController
     return false;
   }
 
-  TopicsController() {
-    try {
-      // 移除 _initTabViews 的调用，因为它会导致提前初始化所有视图
-      // _initTabViews();
-    } catch (e) {
-      l.e('初始化失败: $e');
-      rethrow;
-    }
-  }
+  TopicsController();
 
   @override
   void onInit() {

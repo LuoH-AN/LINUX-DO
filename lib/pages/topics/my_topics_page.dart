@@ -45,7 +45,7 @@ class MyTopicsPage extends GetView<MyTopicsController> {
               return TopicItem(
                 topic: topic,
                 onTap: () {
-                  // TODO: 处理点击事件
+                  controller.toTopicDetail(topic.id);
                 },
               );
             },

@@ -13,12 +13,6 @@ abstract class Routes {
   // 设置页面
   static const SETTINGS = '/settings';
 
-  // 帖子详情页
-  static const POST_DETAIL = '/post/detail';
-
-  // 发帖页面
-  static const POST_CREATE = '/post/create';
-
   // 搜索页面
   static const SEARCH = '/search';
 
@@ -36,4 +30,7 @@ abstract class Routes {
 
   // 创建主题页面
   static const CREATE_TOPIC = '/topic/create';
+
+  // 主题列表页面
+  static const TOPICS = '/topics';
 }
