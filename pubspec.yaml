@@ -26,13 +26,10 @@ dependencies:
     sdk: flutter
     
   cupertino_icons: ^1.0.2
-
   # 图片加载
   cached_network_image: ^3.3.1
-
-  #转换
-  retrofit: ^4.0.3
   #网络
+  retrofit: ^4.0.3
   dio: ^5.4.0
   #状态管理
   get: ^4.6.6
@@ -54,20 +51,14 @@ dependencies:
   device_info_plus: ^9.1.1
   # 包信息
   package_info_plus: ^5.0.1
-  # 加密
-  crypto: ^3.0.3
-  encrypt: ^5.0.3
-  # 文件操作
-  path_provider: ^2.1.1
 
-  mime: ^1.0.4
-
+  # 底部导航
   convex_bottom_bar: ^3.2.0
-
+  # 滑动删除
   flutter_slidable: ^3.0.1
-
+  # 刷新控件
   pull_to_refresh: ^2.0.0
-
+  # 加载动画
   shimmer: ^3.0.0
 
 dev_dependencies:
@@ -87,6 +78,7 @@ flutter:
     - assets/images/
     - assets/images/light/
     - assets/images/dark/
+    - assets/json/
   fonts:
     - family: DINPro
       fonts:

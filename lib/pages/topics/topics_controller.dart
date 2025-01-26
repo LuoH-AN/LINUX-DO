@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
 import '../../controller/base_controller.dart';
 import '../../models/topic_model.dart';
@@ -8,7 +9,6 @@ import 'tab_views/topic_tab_view.dart';
 
 class TopicsController extends BaseController
     with GetSingleTickerProviderStateMixin {
-
   // 帖子列表数据
   final RxList<Topic> topics = <Topic>[].obs;
 
@@ -28,26 +28,57 @@ class TopicsController extends BaseController
     Tab(text: '热门')
   ];
 
-  // 加载状态
-  @override
-  final RxBool isLoading = false.obs;
-
   final isRefreshing = false.obs;
 
-  final scrollController = ScrollController();
+  // 底部栏显示状态
   final isBottomBarVisible = true.obs;
-  var lastScrollPosition = 0.0;
 
   // Tab控制器
   late TabController tabController;
 
   // 各个标签页的控制器
   final _tabControllers = <String, TopicTabController>{}.obs;
-  final tabViews = <TopicTabView>[].obs;
+
+  // 移除 tabViews getter，改用 _buildTabView 方法
+  Widget _buildTabView(int index) {
+    final path = paths[index];
+    return TopicTabView(path: path);
+  }
+
+  // 获取所有tab视图
+  List<Widget> get tabViews => List.generate(
+        paths.length,
+        (index) => _buildTabView(index),
+        growable: false,
+      );
+
+  // 处理滚动通知
+  bool handleScrollNotification(ScrollNotification notification) {
+    if (notification is UserScrollNotification) {
+      switch (notification.direction) {
+        case ScrollDirection.forward:
+          // 向上滚动，显示底部栏
+          if (!isBottomBarVisible.value) {
+            isBottomBarVisible.value = true;
+          }
+          break;
+        case ScrollDirection.reverse:
+          // 向下滚动，隐藏底部栏
+          if (isBottomBarVisible.value) {
+            isBottomBarVisible.value = false;
+          }
+          break;
+        case ScrollDirection.idle:
+          break;
+      }
+    }
+    return false;
+  }
 
   TopicsController() {
     try {
-      _initTabViews();
+      // 移除 _initTabViews 的调用，因为它会导致提前初始化所有视图
+      // _initTabViews();
     } catch (e) {
       l.e('初始化失败: $e');
       rethrow;
@@ -59,18 +90,8 @@ class TopicsController extends BaseController
     super.onInit();
     tabController = TabController(length: tabs.length, vsync: this);
     tabController.addListener(_handleTabChange);
-    _setupScrollController();
-    // 初始化所有tab的controller
-    for (final path in paths) {
-      _initTabController(path);
-    }
-  }
-
-  void _initTabViews() {
-    // 只创建TabView,不初始化controller
-    for (final path in paths) {
-      tabViews.add(TopicTabView(path: path));
-    }
+    // 只初始化当前tab的controller
+    _initTabController(paths[tabController.index]);
   }
 
   void _handleTabChange() {
@@ -88,27 +109,8 @@ class TopicsController extends BaseController
     Get.put(controller, tag: path);
   }
 
-  void _setupScrollController() {
-    scrollController.addListener(() {
-      final currentPosition = scrollController.position.pixels;
-      // 判断滚动方向和距离
-      if ((currentPosition - lastScrollPosition).abs() > 50) {
-        if (currentPosition > lastScrollPosition && isBottomBarVisible.value) {
-          // 向上滚动，隐藏底部栏
-          isBottomBarVisible.value = false;
-        } else if (currentPosition < lastScrollPosition &&
-            !isBottomBarVisible.value) {
-          // 向下滚动，显示底部栏
-          isBottomBarVisible.value = true;
-        }
-        lastScrollPosition = currentPosition;
-      }
-    });
-  }
-
   @override
   void onClose() {
-    scrollController.dispose();
     tabController.removeListener(_handleTabChange);
     tabController.dispose();
     // 清理所有controller

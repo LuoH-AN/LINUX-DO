@@ -1,6 +1,5 @@
 class AppConst {
-
-  /// L 站名称 
+  /// L 站名称
   static const String siteName = 'LINUX DO';
 
   /// 我们的口号
@@ -14,6 +13,9 @@ class AppConst {
 
   /// 各种状态的提示
   static const stateHint = _StateConst();
+
+  /// 标识常量
+  static const identifier = _Identifier();
 }
 
 /// 抽屉菜单文本
@@ -52,11 +54,20 @@ class _DrawerMenu {
   String get qa => '快问快答';
 }
 
-
-class _StateConst{
+class _StateConst {
   const _StateConst();
 
   String get error => '出错啦~';
-
   String get empty => '暂无数据哦~';
+}
+
+/// 标识常量
+class _Identifier {
+  const _Identifier();
+
+  String get token => 'token';
+  String get userInfo => 'userInfo';
+  String get theme => 'theme';
+  String get language => 'language';
+  String get isFirst => 'isFirst';
 }

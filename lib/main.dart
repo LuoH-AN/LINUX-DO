@@ -21,17 +21,15 @@ void main() async {
   // 初始化App
   await App.initial();
 
-  await ScreenUtil.ensureScreenSize();
-
   runApp(const MyApp());
 
-  _adjustStatusBar();
-}
-
-_adjustStatusBar() {
+  // 设置系统UI样式
   if (Platform.isAndroid) {
-    SystemUiOverlayStyle style =
-        const SystemUiOverlayStyle(statusBarColor: Colors.transparent);
+    SystemUiOverlayStyle style = const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+    );
     SystemChrome.setSystemUIOverlayStyle(style);
   }
 }
@@ -54,7 +52,7 @@ class MyApp extends StatelessWidget {
           // 主题配置
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: ThemeMode.light, // 跟随系统主题
+          themeMode: ThemeMode.system, // 跟随系统主题
 
           // 路由配置
           initialRoute: AppPages.INITIAL,
@@ -75,10 +73,29 @@ class MyApp extends StatelessWidget {
 
           // 全局设置
           builder: (context, child) {
-            return GestureDetector(
-              // 点击空白处收起键盘
-              onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-              child: child!,
+            // 获取当前主题模式
+            final isDark = Theme.of(context).brightness == Brightness.dark;
+
+            // 根据主题设置系统UI样式
+            if (Platform.isAndroid) {
+              SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness:
+                    isDark ? Brightness.light : Brightness.dark,
+                systemNavigationBarColor:
+                    isDark ? const Color(0xFF121212) : Colors.white,
+                systemNavigationBarIconBrightness:
+                    isDark ? Brightness.light : Brightness.dark,
+                systemNavigationBarDividerColor: Colors.transparent,
+              ));
+            }
+
+            return SafeArea(
+              child: GestureDetector(
+                // 点击空白处收起键盘
+                onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+                child: child!,
+              ),
             );
           },
         );

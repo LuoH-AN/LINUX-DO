@@ -1,9 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'controller/global_controller.dart';
 import 'net/api_service.dart';
-import 'utils/user_cache.dart';
 import 'utils/inject.dart';
-import 'utils/sp_util.dart';
+import 'utils/storage_manager.dart';
 import 'utils/device_util.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -20,11 +21,8 @@ class App {
 
   /// 初始化App
   static Future<void> initial() async {
-    // 初始化Flutter
-    WidgetsFlutterBinding.ensureInitialized();
-
     // 初始化SharedPreferences
-    await SpUtil.init();
+    await StorageManager.init();
 
     // 初始化设备信息
     await DeviceUtil.init();
@@ -34,6 +32,7 @@ class App {
 
     // 初始化API服务
     Inject.put<ApiService>(ApiService(Dio()));
+    Inject.put<GlobalController>(GlobalController());
 
     // 添加网络拦截器
     addInterceptor();

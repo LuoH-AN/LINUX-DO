@@ -13,7 +13,7 @@ import '../pages/topics/topics_controller.dart';
 part 'app_routes.dart';
 
 class AppPages {
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.STARTUP;
   static const REGISTER = '/register';
   static const TOPIC_DETAIL = '/topic_detail';
   static const CREATE_TOPIC = '/create_topic';

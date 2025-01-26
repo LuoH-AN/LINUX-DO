@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   /// L站 主色调
-  static const Color primary = Color(0xFF1976D2);
+  static const Color primary = Color(0xFF2196F3);
 
   /// L站 亮色
-  static const Color primaryLight = Color(0xFF1976D2);
+  static const Color primaryLight = Color(0xFF64B5F6);
 
   /// 次要颜色
   static const Color secondary = Color(0xFFD7EFFD);
@@ -94,16 +94,16 @@ class AppColors {
 }
 
 class _Colors {
-  final Color background;    // 背景色
-  final Color surface;       // 表面色
-  final Color card;         // 卡片色
-  final Color divider;      // 分割线颜色
-  final Color text;         // 主文本色
+  final Color background; // 背景色
+  final Color surface; // 表面色
+  final Color card; // 卡片色
+  final Color divider; // 分割线颜色
+  final Color text; // 主文本色
   final Color textSecondary; // 次要文本色
-  final Color textHint;     // 提示文本色
-  final Color icon;         // 图标色
+  final Color textHint; // 提示文本色
+  final Color icon; // 图标色
   final Color iconSecondary; // 次要图标色
-  final Color shadow;       // 阴影色
+  final Color shadow; // 阴影色
   final Color inputFillColor; // 输入框填充色
 
   const _Colors({

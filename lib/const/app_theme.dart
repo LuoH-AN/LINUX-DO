@@ -12,7 +12,7 @@ class AppTheme {
       cardColor: AppColors.light.card,
       dividerColor: AppColors.light.divider,
       shadowColor: AppColors.light.shadow,
-      
+
       // 文字主题
       textTheme: TextTheme(
         titleLarge: TextStyle(color: AppColors.light.text),
@@ -147,7 +147,7 @@ class AppTheme {
       cardColor: AppColors.dark.card,
       dividerColor: AppColors.dark.divider,
       shadowColor: AppColors.dark.shadow,
-      
+
       // 文字主题
       textTheme: TextTheme(
         titleLarge: TextStyle(color: AppColors.dark.text),
@@ -259,7 +259,7 @@ class AppTheme {
       ),
 
       // 底部导航栏主题
-      bottomNavigationBarTheme:  BottomNavigationBarThemeData(
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: AppColors.dark.surface,
         selectedItemColor: AppColors.primary,
         unselectedItemColor: const Color(0xFF808080),
@@ -274,8 +274,6 @@ class AppTheme {
   }
 }
 
-
 class AppFontFamily {
-  
   static const dinPro = 'DINPro';
 }

@@ -7,8 +7,16 @@ import '../../const/app_images.dart';
 import '../../widgets/drawer_menu.dart';
 import 'topics_controller.dart';
 
-class TopicsPage extends GetView<TopicsController> {
-  const TopicsPage({super.key});
+class TopicsPage extends StatefulWidget {
+  const TopicsPage({Key? key}) : super(key: key);
+
+  @override
+  State<TopicsPage> createState() => _TopicsPageState();
+}
+
+class _TopicsPageState extends State<TopicsPage>
+    with SingleTickerProviderStateMixin {
+  final TopicsController controller = Get.find<TopicsController>();
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +25,12 @@ class TopicsPage extends GetView<TopicsController> {
     final margin = 18.w;
     final menuWidth = 44.w; // 菜单按钮宽度
     final horizontalPadding = 16.w; // 水平内边距
-    return DefaultTabController(
-      length: controller.tabs.length,
-      child: Scaffold(
-        drawer: const DrawerMenu(),
-        body: NestedScrollView(
-          controller: controller.scrollController,
+    return Scaffold(
+      drawer: const DrawerMenu(),
+      body: NotificationListener<ScrollNotification>(
+        onNotification: controller.handleScrollNotification,
+        child: NestedScrollView(
+          physics: const ClampingScrollPhysics(),
           headerSliverBuilder: (context, innerBoxIsScrolled) {
             return [
               SliverPersistentHeader(
@@ -200,6 +208,7 @@ class TopicsPage extends GetView<TopicsController> {
                       ),
                     ),
                     child: TabBar(
+                      controller: controller.tabController,
                       isScrollable: false,
                       labelColor: AppColors.primary,
                       unselectedLabelColor: Theme.of(context).hintColor,
@@ -222,6 +231,8 @@ class TopicsPage extends GetView<TopicsController> {
             ];
           },
           body: TabBarView(
+            controller: controller.tabController,
+            physics: const NeverScrollableScrollPhysics(),
             children: controller.tabViews,
           ),
         ),

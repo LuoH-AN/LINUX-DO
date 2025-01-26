@@ -47,3 +47,5 @@ app.*.map.json
 .dart_tool/
 .vscode/
 .idea/
+
+pubspec.lock

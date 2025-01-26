@@ -6,7 +6,8 @@ import '../../../net/api_service.dart';
 import '../../../utils/log.dart';
 import '../../../utils/user_cache.dart';
 
-class TopicTabController extends BaseController {
+class TopicTabController extends BaseController
+    with GetSingleTickerProviderStateMixin {
   final String path;
   final ApiService apiService = Get.find();
   final _userCache = UserCache();
@@ -42,7 +43,6 @@ class TopicTabController extends BaseController {
     try {
       isLoading.value = true;
       clearError();
-      l.i('当前请求Path : $path');
       final response = await apiService.getTopics(path);
 
       // 更新用户缓存
@@ -102,7 +102,7 @@ class TopicTabController extends BaseController {
       topics.addAll(response.topicList?.topics ?? []);
       hasMore.value = response.topicList?.moreTopicsUrl != null;
       currentPage.value = nextPage;
-      
+
       if (!hasMore.value) {
         refreshController.loadNoData();
       } else {
@@ -136,4 +136,4 @@ class TopicTabController extends BaseController {
     if (latestPosterId == null) return null;
     return _userCache.getUserName(latestPosterId);
   }
-} 
+}
