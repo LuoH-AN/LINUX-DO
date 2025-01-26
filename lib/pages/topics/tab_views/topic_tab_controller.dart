@@ -120,6 +120,7 @@ class TopicTabController extends BaseController
 
   // 跳转到帖子详情
   void toTopicDetail(int id) {
+    l.d('当前的id: $id');
     Get.toNamed(Routes.TOPIC_DETAIL, arguments: id);
   }
 

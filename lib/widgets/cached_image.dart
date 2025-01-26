@@ -75,7 +75,7 @@ class CachedImage extends StatelessWidget {
           : borderRadius,
       ),
       child: Icon(
-        Icons.image_outlined,
+        Icons.account_circle_sharp,
         size: (width ?? height ?? 24) * 0.5,
         color: Colors.grey.withValues(alpha: .3),
       ),

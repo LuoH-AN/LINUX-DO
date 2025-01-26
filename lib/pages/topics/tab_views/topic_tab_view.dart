@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../utils/log.dart';
-import '../../../widgets/linux_do_refresh.dart';
+import '../../../widgets/li_do_refresh.dart';
 import '../../../widgets/state_view.dart';
 import '../../../widgets/topic_item.dart';
 import 'topic_tab_controller.dart';
@@ -37,7 +37,7 @@ class _TopicTabViewState extends State<TopicTabView>
   Widget build(BuildContext context) {
     super.build(context);
     return Obx(() {
-      final content = LinuxDoSmartRefresher(
+      final content = LiDoSmartRefresher(
         controller: controller.refreshController,
         onRefresh: controller.onRefresh,
         onLoading: controller.loadMore,

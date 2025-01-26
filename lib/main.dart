@@ -22,16 +22,6 @@ void main() async {
   await App.initial();
 
   runApp(const MyApp());
-
-  // 设置系统UI样式
-  if (Platform.isAndroid) {
-    SystemUiOverlayStyle style = const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarDividerColor: Colors.transparent,
-    );
-    SystemChrome.setSystemUIOverlayStyle(style);
-  }
 }
 
 class MyApp extends StatelessWidget {

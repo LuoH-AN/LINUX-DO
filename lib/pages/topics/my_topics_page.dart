@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../widgets/loading_animation.dart';
-import '../../widgets/linux_do_refresh.dart';
+import '../../widgets/li_do_loading.dart';
+import '../../widgets/li_do_refresh.dart';
 import 'my_topics_controller.dart';
 import '../../widgets/topic_item.dart';
 
@@ -33,7 +33,7 @@ class MyTopicsPage extends GetView<MyTopicsController> {
           );
         }
 
-        return LinuxDoSmartRefresher(
+        return LiDoSmartRefresher(
           controller: controller.refreshController,
           onRefresh: controller.onRefresh,
           onLoading: controller.loadMore,

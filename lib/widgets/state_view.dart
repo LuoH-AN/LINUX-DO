@@ -21,6 +21,7 @@ class StateView extends GetView {
   final String? emptyMessage;
   final VoidCallback? onRetry;
   final int shimmerCount;
+  final Widget? shimmerView;
 
   const StateView({
     super.key,
@@ -29,6 +30,7 @@ class StateView extends GetView {
     this.emptyMessage,
     this.onRetry,
     this.shimmerCount = 7,
+    this.shimmerView,
     required this.child,
   });
 
@@ -36,7 +38,9 @@ class StateView extends GetView {
   Widget build(BuildContext context) {
     switch (state) {
       case ViewState.loading:
-        return _buildShimmerLoading(context);
+        return shimmerView == null
+            ? _buildShimmerLoading(context)
+            : shimmerView!;
       case ViewState.error:
         return _buildError(context);
       case ViewState.empty:
@@ -49,12 +53,9 @@ class StateView extends GetView {
   Widget _buildShimmerLoading(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Shimmer.fromColors(
-      baseColor: isDark 
-          ? const Color(0xFF262626)
-          : Colors.white,
-      highlightColor: isDark 
-          ? const Color(0xFF303030)
-          : const Color(0xFFF5F5F5),
+      baseColor: isDark ? const Color(0xFF262626) : Colors.white,
+      highlightColor:
+          isDark ? const Color(0xFF303030) : const Color(0xFFF5F5F5),
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.w),
@@ -66,9 +67,8 @@ class StateView extends GetView {
 
   Widget _buildShimmerItem(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final shimmerColor = isDark 
-        ? const Color(0xFF303030)
-        : const Color(0xFFF5F5F5);
+    final shimmerColor =
+        isDark ? const Color(0xFF303030) : const Color(0xFFF5F5F5);
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 4.w),
@@ -78,7 +78,7 @@ class StateView extends GetView {
         borderRadius: BorderRadius.circular(4.w),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).shadowColor.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: .05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -200,6 +200,36 @@ class StateView extends GetView {
                 text: '重试', size: LiDoButtonSize.small, onPressed: onRetry),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class ShimmerDetails extends GetView {
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Shimmer.fromColors(
+      baseColor: isDark ? const Color(0xFF262626) : Colors.white,
+      highlightColor:
+          isDark ? const Color(0xFF303030) : const Color(0xFFF5F5F5),
+      child: Container(
+        width: double.infinity,
+        height: double.infinity,
+        margin: EdgeInsets.symmetric(vertical: 4.w),
+        padding: EdgeInsets.all(14.w),
+        decoration: BoxDecoration(
+          color: isDark ? Colors.black : Colors.white,
+          borderRadius: BorderRadius.circular(4.w),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withValues(alpha: .05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
       ),
     );
   }

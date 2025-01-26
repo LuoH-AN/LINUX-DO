@@ -8,24 +8,25 @@ part of 'topic_detail.dart';
 
 TopicDetail _$TopicDetailFromJson(Map<String, dynamic> json) => TopicDetail(
       id: (json['id'] as num).toInt(),
-      title: json['title'] as String,
-      fancyTitle: json['fancy_title'] as String,
-      postsCount: (json['posts_count'] as num).toInt(),
-      createdAt: json['created_at'] as String,
-      views: (json['views'] as num).toInt(),
-      replyCount: (json['reply_count'] as num).toInt(),
-      likeCount: (json['like_count'] as num).toInt(),
-      lastPostedAt: json['last_posted_at'] as String,
+      title: json['title'] as String?,
+      fancyTitle: json['fancy_title'] as String?,
+      postsCount: (json['posts_count'] as num?)?.toInt(),
+      createdAt: json['created_at'] as String?,
+      views: (json['views'] as num?)?.toInt(),
+      replyCount: (json['reply_count'] as num?)?.toInt(),
+      likeCount: (json['like_count'] as num?)?.toInt(),
+      lastPostedAt: json['last_posted_at'] as String?,
       visible: json['visible'] as bool?,
       closed: json['closed'] as bool?,
       archived: json['archived'] as bool?,
-      archetype: json['archetype'] as String,
-      slug: json['slug'] as String,
-      categoryId: (json['category_id'] as num).toInt(),
-      wordCount: (json['word_count'] as num).toInt(),
-      userId: (json['user_id'] as num).toInt(),
-      postStream:
-          PostStream.fromJson(json['post_stream'] as Map<String, dynamic>),
+      archetype: json['archetype'] as String?,
+      slug: json['slug'] as String?,
+      categoryId: (json['category_id'] as num?)?.toInt(),
+      wordCount: (json['word_count'] as num?)?.toInt(),
+      userId: (json['user_id'] as num?)?.toInt(),
+      postStream: json['post_stream'] == null
+          ? null
+          : PostStream.fromJson(json['post_stream'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$TopicDetailToJson(TopicDetail instance) =>
@@ -51,11 +52,11 @@ Map<String, dynamic> _$TopicDetailToJson(TopicDetail instance) =>
     };
 
 PostStream _$PostStreamFromJson(Map<String, dynamic> json) => PostStream(
-      posts: (json['posts'] as List<dynamic>)
-          .map((e) => Post.fromJson(e as Map<String, dynamic>))
+      posts: (json['posts'] as List<dynamic>?)
+          ?.map((e) => Post.fromJson(e as Map<String, dynamic>))
           .toList(),
-      stream: (json['stream'] as List<dynamic>)
-          .map((e) => (e as num).toInt())
+      stream: (json['stream'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
           .toList(),
     );
 
@@ -67,26 +68,27 @@ Map<String, dynamic> _$PostStreamToJson(PostStream instance) =>
 
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
       id: (json['id'] as num).toInt(),
-      name: json['name'] as String,
-      username: json['username'] as String,
-      avatarTemplate: json['avatar_template'] as String,
-      createdAt: json['created_at'] as String,
-      cooked: json['cooked'] as String,
-      postNumber: (json['post_number'] as num).toInt(),
-      postType: (json['post_type'] as num).toInt(),
-      updatedAt: json['updated_at'] as String,
-      replyCount: (json['reply_count'] as num).toInt(),
-      quoteCount: (json['quote_count'] as num).toInt(),
-      incomingLinkCount: (json['incoming_link_count'] as num).toInt(),
-      reads: (json['reads'] as num).toInt(),
-      score: (json['score'] as num).toDouble(),
+      name: json['name'] as String?,
+      username: json['username'] as String?,
+      userId: (json['user_id'] as num?)?.toInt(),
+      avatarTemplate: json['avatar_template'] as String?,
+      createdAt: json['created_at'] as String?,
+      cooked: json['cooked'] as String?,
+      postNumber: (json['post_number'] as num?)?.toInt(),
+      postType: (json['post_type'] as num?)?.toInt(),
+      updatedAt: json['updated_at'] as String?,
+      replyCount: (json['reply_count'] as num?)?.toInt(),
+      quoteCount: (json['quote_count'] as num?)?.toInt(),
+      incomingLinkCount: (json['incoming_link_count'] as num?)?.toInt(),
+      reads: (json['reads'] as num?)?.toInt(),
+      score: (json['score'] as num?)?.toDouble(),
       yours: json['yours'] as bool?,
-      topicId: (json['topic_id'] as num).toInt(),
-      topicSlug: json['topic_slug'] as String,
-      displayUsername: json['display_username'] as String,
+      topicId: (json['topic_id'] as num?)?.toInt(),
+      topicSlug: json['topic_slug'] as String?,
+      displayUsername: json['display_username'] as String?,
       primaryGroupName: json['primary_group_name'] as String?,
       hidden: json['hidden'] as bool?,
-      trustLevel: (json['trust_level'] as num).toInt(),
+      trustLevel: (json['trust_level'] as num?)?.toInt(),
       userTitle: json['user_title'] as String?,
       bookmarked: json['bookmarked'] as bool?,
       actionsSummary: (json['actions_summary'] as List<dynamic>?)
@@ -98,6 +100,7 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'username': instance.username,
+      'user_id': instance.userId,
       'avatar_template': instance.avatarTemplate,
       'created_at': instance.createdAt,
       'cooked': instance.cooked,

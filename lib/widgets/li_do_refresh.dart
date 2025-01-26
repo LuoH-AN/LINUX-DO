@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
-import 'loading_animation.dart';
+import 'li_do_loading.dart';
 
-class LinuxDoSmartRefresher extends StatelessWidget {
+class LiDoSmartRefresher extends StatelessWidget {
   final RefreshController controller;
   final Widget child;
   final VoidCallback? onRefresh;
@@ -12,7 +12,7 @@ class LinuxDoSmartRefresher extends StatelessWidget {
   final bool enablePullUp;
   final ScrollPhysics? physics;
 
-  const LinuxDoSmartRefresher({
+  const LiDoSmartRefresher({
     super.key,
     required this.controller,
     required this.child,

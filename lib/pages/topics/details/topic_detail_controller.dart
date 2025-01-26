@@ -4,6 +4,7 @@ import 'package:linux_do/controller/base_controller.dart';
 import '../../../models/topic_detail.dart';
 import '../../../net/api_service.dart';
 import '../../../utils/log.dart';
+import '../../../widgets/state_view.dart';
 
 class TopicDetailController extends BaseController {
   final ApiService _apiService = Get.find<ApiService>();
@@ -48,5 +49,15 @@ class TopicDetailController extends BaseController {
 
   Future<void> refreshTopicDetail() async {
     await fetchTopicDetail();
+  }
+
+  ViewState getViewState() {
+    if (isLoading.value) {
+      return ViewState.loading;
+    }
+    if (hasError.value) {
+      return ViewState.error;
+    }
+    return ViewState.content;
   }
 }

@@ -154,7 +154,7 @@ class LiDoButton extends StatelessWidget {
         );
       case LiDoButtonType.secondary:
         return ElevatedButton.styleFrom(
-          backgroundColor: theme.primaryColor.withOpacity(0.1),
+          backgroundColor: theme.primaryColor.withValues(alpha: .1),
           foregroundColor: theme.primaryColor,
           padding: _getPadding(),
           elevation: 0,
@@ -173,7 +173,7 @@ class LiDoButton extends StatelessWidget {
           backgroundColor: WidgetStateProperty.resolveWith<Color?>(
             (Set<WidgetState> states) {
               if (states.contains(WidgetState.hovered)) {
-                return theme.primaryColor.withOpacity(0.05);
+                return theme.primaryColor.withValues(alpha: .05);
               }
               return null;
             },

@@ -15,7 +15,7 @@ import '../pages/topics/details/topic_detail_controller.dart';
 part 'app_routes.dart';
 
 class AppPages {
-  static const INITIAL = Routes.HOME;
+  static const INITIAL = Routes.LOGIN;
   static const REGISTER = '/register';
   static const TOPIC_DETAIL = '/topic_detail';
   static const CREATE_TOPIC = '/create_topic';
@@ -56,7 +56,7 @@ class AppPages {
     /// 帖子详情页
     GetPage(
       name: Routes.TOPIC_DETAIL,
-      page: () => const TopicDetailPage(),
+      page: () => TopicDetailPage(),
       binding: BindingsBuilder(() {
         Get.lazyPut(() => TopicDetailController());
       }),

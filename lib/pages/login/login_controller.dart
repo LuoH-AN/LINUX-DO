@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../controller/base_controller.dart';
+import 'package:linux_do/controller/base_controller.dart';
 
 class LoginController extends BaseController {
   final username = ''.obs;
@@ -10,24 +10,15 @@ class LoginController extends BaseController {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  Future<void> login() async {
+  void login() {
     if (username.value.isEmpty) {
-      showError('请输入用户名');
+      Get.snackbar('提示', '请输入账号');
       return;
     }
     if (password.value.isEmpty) {
-      showError('请输入密码');
+      Get.snackbar('提示', '请输入密码');
       return;
     }
-
-    try {
-      isLoading.value = true;
-      await Future.delayed(const Duration(seconds: 2));
-      isLoading.value = false;
-      Get.offAllNamed('/home');
-    } catch (e) {
-      isLoading.value = false;
-      showError(e.toString());
-    }
+    Get.snackbar('登录', '去登录');
   }
 } 

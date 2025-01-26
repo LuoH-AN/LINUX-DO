@@ -90,8 +90,9 @@ class LinuxDoRefreshController extends GetxController
 
 class LinuxDoRefreshLoading extends StatelessWidget {
   final controller = Get.put(LinuxDoRefreshController());
+  final double? fontSize;
 
-  LinuxDoRefreshLoading({super.key});
+  LinuxDoRefreshLoading({super.key,this.fontSize = 16.0});
 
   @override
   Widget build(BuildContext context) {
@@ -112,6 +113,7 @@ class LinuxDoRefreshLoading extends StatelessWidget {
           char: chars[index],
           offset: controller.getCharOffset(index),
           color: Theme.of(context).primaryColor,
+          fontSize: fontSize,
         );
       }),
     );
@@ -122,11 +124,12 @@ class _LinuxDoBouncingChar extends StatelessWidget {
   final String char;
   final double offset;
   final Color color;
+  final double? fontSize;
 
   const _LinuxDoBouncingChar({
     required this.char,
     required this.offset,
-    required this.color,
+    required this.color, this.fontSize = 16.0
   });
 
   @override
@@ -136,7 +139,7 @@ class _LinuxDoBouncingChar extends StatelessWidget {
       child: Text(
         char,
         style: TextStyle(
-          fontSize: 16.w,
+          fontSize: fontSize?.w,
           color: color,
           fontFamily: AppFontFamily.dinPro,
           fontWeight: FontWeight.bold,

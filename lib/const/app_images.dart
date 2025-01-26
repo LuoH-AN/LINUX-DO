@@ -8,6 +8,9 @@ class AppImages {
   // 图片名称
   static const String _logoName = 'logo.webp';
   static const String _bannerName = 'search-banner.png';
+  static const String _inputAccount = 'input-account.png';
+  static const String _inputPassword = 'input-password.png';
+  static const String _headerBackground = 'header-background.png';
 
 
   // 状态Icon
@@ -42,5 +45,20 @@ class AppImages {
     // 网络错误
   static String getNetError(BuildContext context) {
     return getImagePath(context, _netErrorName);
+  }
+
+  // 获取输入框图标
+  static String getInputAccount(BuildContext context) {
+    return getImagePath(context, _inputAccount);
+  }
+
+  // 获取输入框图标
+  static String getInputPassword(BuildContext context) {
+    return getImagePath(context, _inputPassword);
+  }
+
+  // 获取头部背景
+  static String getHeaderBackground(BuildContext context) {
+    return getImagePath(context, _headerBackground);
   }
 }
