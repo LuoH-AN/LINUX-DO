@@ -91,7 +91,9 @@ class ProfilePage extends GetView<ProfileController> {
           ),
           // 编辑按钮
           IconButton(
-            icon: Icon(Icons.edit, color: Theme.of(context).iconTheme.color?.withValues(alpha: .5)),
+            icon: Icon(Icons.edit,
+                color:
+                    Theme.of(context).iconTheme.color?.withValues(alpha: .5)),
             onPressed: () {
               // TODO: 编辑个人信息
             },
@@ -124,14 +126,18 @@ class ProfilePage extends GetView<ProfileController> {
           _buildFunctionItem(context, '我的点赞', Icons.thumb_up_outlined, () {}),
           _buildFunctionItem(context, '消息通知', Icons.notifications_none, () {}),
           _buildFunctionItem(context, '帮助反馈', Icons.help_outline, () {}),
-          _buildFunctionItem(context, '关于我们', Icons.info_outline, () {}),
+          _buildFunctionItem(context, '退出登录', Icons.info_outline, () {
+            // 先做个临时处理
+            controller.logout();
+          }),
         ],
       ),
     );
   }
 
   // 功能列表项
-  Widget _buildFunctionItem(BuildContext context, String title, IconData icon, VoidCallback onTap) {
+  Widget _buildFunctionItem(
+      BuildContext context, String title, IconData icon, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
       child: Container(

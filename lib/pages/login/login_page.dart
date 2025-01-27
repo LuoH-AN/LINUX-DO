@@ -41,7 +41,8 @@ class LoginPage extends GetView<LoginController> {
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w500,
-                        color: Theme.of(Get.context!).textTheme.titleLarge?.color,
+                        color:
+                            Theme.of(Get.context!).textTheme.titleLarge?.color,
                       ),
                     ),
                     IconButton(
@@ -58,7 +59,10 @@ class LoginPage extends GetView<LoginController> {
                       style: {
                         "body": Style(
                           padding: HtmlPaddings.zero,
-                          color: Theme.of(Get.context!).textTheme.bodyMedium?.color,
+                          color: Theme.of(Get.context!)
+                              .textTheme
+                              .bodyMedium
+                              ?.color,
                         ),
                         "p": Style(
                           margin: Margins.only(bottom: 4.w),
@@ -105,10 +109,6 @@ class LoginPage extends GetView<LoginController> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
-    /// 屏幕高度
-    final topHeight = MediaQuery.of(context).size.height * .36;
-    final logoTop = MediaQuery.of(context).size.height * .18;
     return Scaffold(
       body: Material(
         child: Stack(
@@ -124,237 +124,241 @@ class LoginPage extends GetView<LoginController> {
               ),
             ),
 
-            Positioned(
-              top: logoTop,
-              left: AppSizes.speceMedium20,
-              right: AppSizes.speceMedium20,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // 加上logo感觉不太好看
-                  // Image.asset(
-                  //   AppImages.getLogo(context),
-                  //   width: 120.w,
-                  // ),
-                  // 4.vGap,
-                  Text.rich(TextSpan(
-                      text: AppConst.login.greetingPhrase,
-                      style: TextStyle(
-                          fontSize: AppSizes.fontLarge,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.white),
-                      children: [
-                        TextSpan(
-                          text: ' ${AppConst.siteName}',
-                          style: TextStyle(
-                              fontSize: AppSizes.fontEnormousb,
-                              fontWeight: FontWeight.bold,
-                              fontFamily: AppFontFamily.dinPro,
-                              color: AppColors.white),
-                        )
-                      ]))
-                ],
-              ),
-            ),
-
             // 主要内容
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: AppSizes.speceMedium20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  topHeight.vGap,
-                  // 账号输入框
-                  Container(
-                    height: AppSizes.spaceHuge40,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: theme.hintColor.withValues(alpha: .2),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(AppSizes.radiusTiny),
-                    ),
-                    child: TextField(
-                      style: TextStyle(fontSize: AppSizes.fontNormal),
-                      onChanged: (value) => controller.username.value = value,
-                      decoration: InputDecoration(
-                        hintText: AppConst.login.accountHint,
-                        hintStyle: TextStyle(
-                          fontSize: AppSizes.fontNormal,
-                          color: theme.hintColor.withValues(alpha: .2),
-                        ),
-                        filled: false,
-                        fillColor: Colors.transparent,
-                        border: InputBorder.none,
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.all(AppSizes.spaceSmall10),
-                          child: Image.asset(
-                            AppImages.getInputAccount(context),
-                            width: AppSizes.iconSmall,
-                            height: AppSizes.iconSmall,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: AppSizes.spaceMedium,
-                          vertical: AppSizes.spaceSmall10,
-                        ),
-                      ),
-                    ),
-                  ),
-                  16.vGap,
-                  // 密码输入框
-                  Container(
-                    height: 44.w,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: theme.hintColor.withValues(alpha: .2),
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(AppSizes.radiusTiny),
-                    ),
-                    child: Obx(
-                      () => TextField(
-                        style: TextStyle(fontSize: AppSizes.fontNormal),
-                        onChanged: (value) => controller.password.value = value,
-                        obscureText: !controller.isPasswordVisible.value,
-                        decoration: InputDecoration(
-                          hintText: AppConst.login.passwordHint,
-                          hintStyle: TextStyle(
-                            fontSize: AppSizes.fontNormal,
-                            color: theme.hintColor.withValues(alpha: .2),
-                          ),
-                          filled: false,
-                          fillColor: Colors.transparent,
-                          border: InputBorder.none,
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.all(AppSizes.spaceNormal),
-                            child: Image.asset(
-                              AppImages.getInputPassword(context),
-                              width: AppSizes.iconTiny,
-                              height: AppSizes.iconTiny,
-                              color: AppColors.primary,
-                            ),
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              controller.isPasswordVisible.value
-                                  ? CupertinoIcons.eye_fill
-                                  : CupertinoIcons.eye_slash,
-                              color: theme.hintColor,
-                              size: AppSizes.spaceMedium,
-                            ),
-                            onPressed: controller.togglePasswordVisibility,
-                          ),
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: AppSizes.spaceMedium,
-                            vertical: AppSizes.spaceSmall10,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  // 忘记密码和注册
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                        onPressed: controller.forgetPassword,
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          AppConst.login.forgotPassword,
-                          style: TextStyle(
-                            fontSize: AppSizes.fontSmall,
-                            color: theme.hintColor,
-                          ),
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          Text(
-                            AppConst.login.noAccount,
+            SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: MediaQuery.of(context).size.height,
+                ),
+                child: IntrinsicHeight(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: AppSizes.speceMedium20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * .18),
+                        Text.rich(TextSpan(
+                            text: AppConst.login.greetingPhrase,
                             style: TextStyle(
-                              fontSize: AppSizes.fontSmall,
-                              color: theme.hintColor,
+                                fontSize: AppSizes.fontLarge,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.white),
+                            children: [
+                              TextSpan(
+                                text: ' ${AppConst.siteName}',
+                                style: TextStyle(
+                                    fontSize: AppSizes.fontEnormousb,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: AppFontFamily.dinPro,
+                                    color: AppColors.white),
+                              )
+                            ])),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * .18),
+                        // 账号输入框
+                        Container(
+                          height: AppSizes.spaceHuge40,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: theme.hintColor.withValues(alpha: .2),
+                              width: 1,
                             ),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusTiny),
                           ),
-                          TextButton(
-                            onPressed: controller.reigster,
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.zero,
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              AppConst.login.register,
-                              style: TextStyle(
-                                fontSize: AppSizes.fontSmall,
-                                color: theme.primaryColor,
+                          child: TextField(
+                            style: TextStyle(fontSize: AppSizes.fontNormal),
+                            onChanged: (value) =>
+                                controller.username.value = value,
+                            decoration: InputDecoration(
+                              hintText: AppConst.login.accountHint,
+                              hintStyle: TextStyle(
+                                fontSize: AppSizes.fontNormal,
+                                color: theme.hintColor.withValues(alpha: .2),
+                              ),
+                              filled: false,
+                              fillColor: Colors.transparent,
+                              border: InputBorder.none,
+                              prefixIcon: Padding(
+                                padding: EdgeInsets.all(AppSizes.spaceSmall10),
+                                child: Image.asset(
+                                  AppImages.getInputAccount(context),
+                                  width: AppSizes.iconSmall,
+                                  height: AppSizes.iconSmall,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              isDense: true,
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: AppSizes.spaceMedium,
+                                vertical: AppSizes.spaceSmall10,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  24.vGap,
-                  // 登录按钮
-                  SizedBox(
-                    width: double.infinity,
-                    height: 44.w,
-                    child: LiDoButton(
-                      text: AppConst.login.title,
-                      type: LiDoButtonType.primary,
-                      size: LiDoButtonSize.large,
-                      onPressed: controller.login,
-                      loading: false,
-                    ),
-                  ),
-                  const Spacer(),
-                  // 底部协议
-                  Center(
-                    child: Text.rich(
-                      TextSpan(
-                        text: AppConst.login.agreement,
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          color: theme.hintColor,
                         ),
-                        children: [
-                          TextSpan(
-                            text: AppConst.login.serviceAgreement,
-                            style: TextStyle(
-                              color: theme.primaryColor,
+                        16.vGap,
+                        // 密码输入框
+                        Container(
+                          height: 44.w,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: theme.hintColor.withValues(alpha: .2),
+                              width: 1,
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () => showAgreementDialog(
-                                    AppConst.login.serviceAgreement,
-                                    'assets/html/terms-service.html',
-                                  ),
+                            borderRadius:
+                                BorderRadius.circular(AppSizes.radiusTiny),
                           ),
-                          TextSpan(text: ' ${AppConst.login.and} '),
-                          TextSpan(
-                            text: AppConst.login.privacyPolicy,
-                            style: TextStyle(
-                              color: theme.primaryColor,
+                          child: Obx(
+                            () => TextField(
+                              style: TextStyle(fontSize: AppSizes.fontNormal),
+                              onChanged: (value) =>
+                                  controller.password.value = value,
+                              obscureText: !controller.isPasswordVisible.value,
+                              decoration: InputDecoration(
+                                hintText: AppConst.login.passwordHint,
+                                hintStyle: TextStyle(
+                                  fontSize: AppSizes.fontNormal,
+                                  color: theme.hintColor.withValues(alpha: .2),
+                                ),
+                                filled: false,
+                                fillColor: Colors.transparent,
+                                border: InputBorder.none,
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.all(AppSizes.spaceNormal),
+                                  child: Image.asset(
+                                    AppImages.getInputPassword(context),
+                                    width: AppSizes.iconTiny,
+                                    height: AppSizes.iconTiny,
+                                    color: AppColors.primary,
+                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    controller.isPasswordVisible.value
+                                        ? CupertinoIcons.eye_fill
+                                        : CupertinoIcons.eye_slash,
+                                    color: theme.hintColor,
+                                    size: AppSizes.spaceMedium,
+                                  ),
+                                  onPressed:
+                                      controller.togglePasswordVisibility,
+                                ),
+                                isDense: true,
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: AppSizes.spaceMedium,
+                                  vertical: AppSizes.spaceSmall10,
+                                ),
+                              ),
                             ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () => showAgreementDialog(
-                                    AppConst.login.privacyPolicy,
-                                    'assets/html/privacy-policy.html',
-                                  ),
                           ),
-                        ],
-                      ),
-                      textAlign: TextAlign.center,
+                        ),
+                        // 忘记密码和注册
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            TextButton(
+                              onPressed: controller.forgetPassword,
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                AppConst.login.forgotPassword,
+                                style: TextStyle(
+                                  fontSize: AppSizes.fontSmall,
+                                  color: theme.hintColor,
+                                ),
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  AppConst.login.noAccount,
+                                  style: TextStyle(
+                                    fontSize: AppSizes.fontSmall,
+                                    color: theme.hintColor,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: controller.reigster,
+                                  style: TextButton.styleFrom(
+                                    padding: EdgeInsets.zero,
+                                    tapTargetSize:
+                                        MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  child: Text(
+                                    AppConst.login.register,
+                                    style: TextStyle(
+                                      fontSize: AppSizes.fontSmall,
+                                      color: theme.primaryColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        24.vGap,
+                        // 登录按钮
+                        SizedBox(
+                          width: double.infinity,
+                          height: 44.w,
+                          child: Obx(
+                            () => LiDoButton(
+                              text: AppConst.login.title,
+                              type: LiDoButtonType.primary,
+                              size: LiDoButtonSize.large,
+                              onPressed: controller.login,
+                              loading: controller.isLoading.value,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        // 底部协议
+                        Center(
+                          child: Text.rich(
+                            TextSpan(
+                              text: AppConst.login.agreement,
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: theme.hintColor,
+                              ),
+                              children: [
+                                TextSpan(
+                                  text: AppConst.login.serviceAgreement,
+                                  style: TextStyle(
+                                    color: theme.primaryColor,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => showAgreementDialog(
+                                          AppConst.login.serviceAgreement,
+                                          'assets/html/terms-service.html',
+                                        ),
+                                ),
+                                TextSpan(text: ' ${AppConst.login.and} '),
+                                TextSpan(
+                                  text: AppConst.login.privacyPolicy,
+                                  style: TextStyle(
+                                    color: theme.primaryColor,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => showAgreementDialog(
+                                          AppConst.login.privacyPolicy,
+                                          'assets/html/privacy-policy.html',
+                                        ),
+                                ),
+                              ],
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        20.vGap,
+                      ],
                     ),
                   ),
-                  28.vGap,
-                ],
+                ),
               ),
             ),
           ],

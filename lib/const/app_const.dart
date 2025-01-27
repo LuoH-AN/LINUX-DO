@@ -73,6 +73,7 @@ class _Identifier {
   String get theme => 'theme';
   String get language => 'language';
   String get isFirst => 'isFirst';
+  String get csrfToken => 'csrfToken';
 }
 
 /// 登录页面文本
@@ -80,26 +81,25 @@ class _LoginConst {
   const _LoginConst();
 
   String get title => '登录';
-  String get greetingPhrase => '欢迎登录';
+  String get greetingPhrase => '欢迎来到';
   String get accountHint => '请输入账号';
   String get passwordHint => '请输入密码';
   String get forgotPassword => '我忘记密码了';
-  String get noAccount => '还没账户？';
-  String get register => '点击注册';
-  String get agreement => '登录代表您已同意';
+  String get noAccount => '还没有账号？';
+  String get register => '立即注册';
+  String get agreement => '登录即代表同意';
   String get serviceAgreement => '服务协议';
   String get and => '和';
   String get privacyPolicy => '隐私政策';
+
+  // 提示信息
+  String get emptyUsername => '请输入账号';
+  String get emptyPassword => '请输入密码';
+  String get loginFailedTitle => '登录失败';
+  String get networkError => '请检查网络连接或稍后重试';
+  String get userInfoError => '用户信息获取失败';
+  String get loginSuccessTitle => '登录成功';
+  String get welcomeBack => '欢迎回来，';
+  String get notImplemented => '此功能暂未开发';
+  String get registerTip => '请先前往https://linux.do站点注册';
 }
-
-// Topic Detail Page
-const double kTopicDetailAvatarSize = 40.0;
-const double kTopicDetailCardPadding = 12.0;
-const double kTopicDetailCardMarginH = 8.0;
-const double kTopicDetailCardMarginV = 4.0;
-const double kTopicDetailSpacing = 8.0;
-
-const double kTopicDetailTitleSize = 16.0;
-const double kTopicDetailSubtitleSize = 12.0;
-const double kTopicDetailContentSize = 14.0;
-const double kTopicDetailIconSize = 16.0;

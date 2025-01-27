@@ -1,57 +1,143 @@
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
+import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:cookie_jar/cookie_jar.dart';
+import 'package:path_provider/path_provider.dart';
 import 'api_response.dart';
 import 'http_config.dart';
-import 'rest_client.dart';
+import '../controller/global_controller.dart';
+import '../const/app_const.dart';
+import '../utils/storage_manager.dart';
+import '../utils/log.dart';
 
 class HttpClient {
   static HttpClient? _instance;
   late final Dio _dio;
-  late final RestClient _restClient;
+  late final CookieJar _cookieJar;
+  late final BaseOptions _options;
+
+  /// 获取dio实例
+  Dio get dio => _dio;
+
+  /// 获取options
+  BaseOptions get options => _options;
+
+  /// 静态方法获取dio实例
+  static Dio get getDio {
+    if (_instance == null) {
+      throw Exception('HttpClient not initialized');
+    }
+    return _instance!._dio;
+  }
+
+  /// 静态方法获取options
+  static BaseOptions get getOptions {
+    if (_instance == null) {
+      throw Exception('HttpClient not initialized');
+    }
+    return _instance!._options;
+  }
 
   /// 私有构造函数
   HttpClient._() {
-    _dio = Dio(BaseOptions(
+    _initOptions();
+    _initCookieManager();
+    _initInterceptors();
+  }
+
+  /// 初始化options
+  void _initOptions() {
+    _options = BaseOptions(
       baseUrl: HttpConfig.baseUrl,
       connectTimeout: const Duration(milliseconds: HttpConfig.connectTimeout),
       receiveTimeout: const Duration(milliseconds: HttpConfig.receiveTimeout),
       sendTimeout: const Duration(milliseconds: HttpConfig.sendTimeout),
-    ));
-    _initInterceptors();
-    _restClient = RestClient(_dio);
+      headers: {
+        'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+        'X-Requested-With': 'XMLHttpRequest',
+      },
+      contentType: 'application/x-www-form-urlencoded',
+      responseType: ResponseType.json,
+      validateStatus: (status) {
+        return status != null && status >= 200 && status < 500;
+      },
+    );
+    _dio = Dio(_options);
+  }
+
+  /// 初始化Cookie管理器
+  Future<void> _initCookieManager() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final cookiePath = '${directory.path}/.cookies/';
+    _cookieJar =
+        PersistCookieJar(ignoreExpires: true, storage: FileStorage(cookiePath));
+    _dio.interceptors.add(CookieManager(_cookieJar));
   }
 
   /// 单例模式
-  static HttpClient get instance => _instance ??= HttpClient._();
+  static Future<HttpClient> getInstance() async {
+    _instance ??= HttpClient._();
+    return _instance!;
+  }
 
-  /// 获取RestClient实例
-  RestClient get rest => _restClient;
+  /// 清除所有Cookie
+  Future<void> clearCookies() async {
+    await _cookieJar.deleteAll();
+  }
 
   /// 初始化拦截器
   void _initInterceptors() {
     // 添加日志拦截器
-    _dio.interceptors.add(LogInterceptor(
-      request: true,
-      requestHeader: true,
-      requestBody: true,
-      responseHeader: true,
-      responseBody: true,
-      error: true,
-    ));
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          l.d('Request: ${options.method} ${options.uri}');
+          l.d('Headers: ${options.headers}');
+          l.d('Data: ${options.data}');
+          return handler.next(options);
+        },
+        onResponse: (response, handler) {
+          l.d('Response: ${response.statusCode}');
+          l.d('Data: ${response.data}');
+          return handler.next(response);
+        },
+        onError: (error, handler) {
+          l.e('Error: ${error.message}');
+          if (error.response != null) {
+            l.e('Response: ${error.response?.data}');
+          }
+          return handler.next(error);
+        },
+      ),
+    );
 
     // 添加错误处理拦截器
     _dio.interceptors.add(InterceptorsWrapper(
       onRequest: (options, handler) {
-        // 在请求之前添加token等通用header
-        options.headers['Authorization'] = 'Bearer your_token_here';
+        // 从本地存储获取CSRF Token
+        final csrfToken =
+            StorageManager.getString(AppConst.identifier.csrfToken);
+        if (csrfToken != null && csrfToken.isNotEmpty) {
+          options.headers['X-CSRF-Token'] = csrfToken;
+        }
         return handler.next(options);
       },
       onResponse: (response, handler) {
-        // 统一处理响应
+        try {
+          // 检查并保存CSRF Token
+          final csrfToken = response.headers.value('X-CSRF-Token');
+          if (csrfToken != null) {
+            StorageManager.setData(AppConst.identifier.csrfToken, csrfToken);
+          }
+        } catch (e) {
+          l.e('处理响应头错误: $e');
+        }
         return handler.next(response);
       },
       onError: (error, handler) {
-        // 统一处理错误
         _handleError(error);
         return handler.next(error);
       },
@@ -71,7 +157,10 @@ class HttpClient {
         switch (error.response?.statusCode) {
           case HttpConfig.unauthorizedCode:
             message = HttpConfig.unauthorizedMessage;
-            // 跳转到登录页
+            // 清除登录状态
+            StorageManager.remove(AppConst.identifier.csrfToken);
+            clearCookies(); // 清除Cookie
+            Get.find<GlobalController>().setIsLogin(false);
             Get.offAllNamed('/login');
             break;
           case HttpConfig.forbiddenCode:
@@ -81,7 +170,7 @@ class HttpClient {
             message = HttpConfig.notFoundMessage;
             break;
           default:
-            message = HttpConfig.errorMessage;
+            message = error.response?.data?['error'] ?? HttpConfig.errorMessage;
         }
         break;
       default:

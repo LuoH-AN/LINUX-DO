@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'controller/global_controller.dart';
 import 'net/api_service.dart';
+import 'net/http_client.dart';
 import 'utils/inject.dart';
 import 'utils/storage_manager.dart';
 import 'utils/device_util.dart';
@@ -30,15 +31,19 @@ class App {
     // 初始化屏幕适配
     await ScreenUtil.ensureScreenSize();
 
+    // 初始化HTTP客户端
+    final httpClient = await HttpClient.getInstance();
+
     // 初始化API服务
-    Inject.put<ApiService>(ApiService(Dio()));
+    Inject.put<ApiService>(ApiService(httpClient.dio));
+
     Inject.put<GlobalController>(GlobalController());
 
     // 添加网络拦截器
     addInterceptor();
 
     // Tag的颜色
-    Tag.initializeFromJson();
+    Tag.init();
 
     // 测试
     // UserCache().clear();

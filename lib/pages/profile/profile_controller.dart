@@ -1,6 +1,9 @@
 import 'package:get/get.dart';
+import '../../const/app_const.dart';
 import '../../controller/base_controller.dart';
+import '../../controller/global_controller.dart';
 import '../../utils/log.dart';
+import '../../utils/storage_manager.dart';
 
 class ProfileController extends BaseController {
   // 用户信息
@@ -73,5 +76,10 @@ class ProfileController extends BaseController {
   // 退出登录
   void logout() {
     Get.offAllNamed('/login');
+
+    // 清除登录状态
+    final globalController = Get.find<GlobalController>();
+    StorageManager.remove(AppConst.identifier.csrfToken);
+    globalController.setIsLogin(false);
   }
 }

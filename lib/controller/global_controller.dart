@@ -7,14 +7,26 @@ import 'base_controller.dart';
 /// 全局控制器
 
 class GlobalController extends BaseController {
-  final RxString _token = ''.obs;
+  /// final RxString _token = ''.obs;
 
+  /// 并不是token，而是cookie
   /// 获取token
-  String get token => _token.value;
+  // String get token => _token.value;
 
-  /// 设置token
-  void setToken(String value) {
-    _token.value = value;
+  // /// 设置token
+  // void setToken(String value) {
+  //   _token.value = value;
+  // }
+
+  /// csrfToken
+  final RxString _csrfToken = ''.obs;
+
+  /// 获取CSRF Token
+  String get csrfToken => _csrfToken.value;
+
+  /// 设置CSRF Token
+  void setCsrfToken(String value) {
+    _csrfToken.value = value;
   }
 
   final RxBool _isLogin = false.obs;
@@ -31,10 +43,10 @@ class GlobalController extends BaseController {
   void onInit() {
     super.onInit();
 
-    // 获取token
-    setToken(StorageManager.getString(AppConst.identifier.token) ?? '');
+    // 获取CSRF Token
+    setCsrfToken(StorageManager.getString(AppConst.identifier.csrfToken) ?? '');
 
     // 获取是否登录
-    setIsLogin(token.isNotEmpty);
+    setIsLogin(csrfToken.isNotEmpty);
   }
 }

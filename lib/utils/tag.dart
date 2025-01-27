@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 class Tag {
   static final Map<String, TagColor> _cache = {};
-  
+
   // 预定义的颜色列表 主要tag太多了
   static const List<Color> _baseColors = [
     Color(0xFF1976D2),
@@ -28,26 +28,27 @@ class Tag {
     final int hashCode = tag.hashCode.abs();
     final int colorIndex = hashCode % _baseColors.length;
     final baseColor = _baseColors[colorIndex];
-    
+
     // 创建新的标签颜色
     final tagColor = TagColor(
       textColor: baseColor,
       backgroundColor: baseColor.withValues(alpha: .1),
     );
-    
+
     // 缓存结果
     _cache[tag] = tagColor;
-    
+
     return tagColor;
   }
 
   // 从 JSON 文件加载所有标签并初始化颜色
-  static Future<void> initializeFromJson() async {
+  static Future<void> init() async {
     try {
-      final String jsonString = await rootBundle.loadString('assets/json/tags.json');
+      final String jsonString =
+          await rootBundle.loadString('assets/json/tags.json');
       final Map<String, dynamic> jsonData = json.decode(jsonString);
       final List<dynamic> tags = jsonData['tags'];
-      
+
       for (var tag in tags) {
         final String tagId = tag['id'];
         getTagColors(tagId); // 生成并缓存颜色
@@ -71,4 +72,4 @@ class TagColor {
     required this.textColor,
     required this.backgroundColor,
   });
-} 
+}

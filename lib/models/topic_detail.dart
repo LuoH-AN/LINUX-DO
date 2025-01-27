@@ -149,11 +149,11 @@ class Post {
     this.actionsSummary,
   });
 
-  String getAvatarUrl(){
+  String getAvatarUrl() {
     return '${HttpConfig.baseUrl}${avatarTemplate!.replaceAll("{size}", "62")}';
   }
 
-  bool isWebMaster(){
+  bool isWebMaster() {
     return userId == 1;
   }
 

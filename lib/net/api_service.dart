@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart' hide Headers;
 import 'package:retrofit/retrofit.dart';
+import '../models/login.dart';
 import '../models/topic_detail.dart';
 import '../models/topic_model.dart';
-import 'api_response.dart';
 import 'http_config.dart';
 
 part 'api_service.g.dart';
@@ -11,12 +11,20 @@ part 'api_service.g.dart';
 abstract class ApiService {
   factory ApiService(Dio dio, {String baseUrl}) = _ApiService;
 
-  // 获取热门话题
-  @GET("/{path}.json")
+  /// 获取CSRF Token
+  @GET('session/csrf')
+  Future<void> getCsrfToken();
+
+  /// 登录
+  @POST('session')
+  Future<LoginResponse> login(@Body() LoginRequest loginRequest);
+
+  /// 获取首页话题
+  @GET("{path}.json")
   Future<TopicListResponse> getTopics(@Path('path') String path);
 
-  // 获取帖子详情
-  @GET("/t/{id}.json")
+  /// 获取帖子详情
+  @GET("t/{id}.json")
   @DioResponseType(ResponseType.json)
   Future<TopicDetail> getTopicDetail(
     @Path("id") String id, {
