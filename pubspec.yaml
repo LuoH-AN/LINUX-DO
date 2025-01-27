@@ -81,6 +81,7 @@ flutter:
     - assets/images/light/
     - assets/images/dark/
     - assets/json/
+    - assets/html/
   fonts:
     - family: DINPro
       fonts:

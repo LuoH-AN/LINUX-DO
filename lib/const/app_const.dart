@@ -80,10 +80,11 @@ class _LoginConst {
   const _LoginConst();
 
   String get title => '登录';
+  String get greetingPhrase => '欢迎登录';
   String get accountHint => '请输入账号';
   String get passwordHint => '请输入密码';
-  String get forgotPassword => '忘记密码';
-  String get noAccount => '还没有账号？';
+  String get forgotPassword => '我忘记密码了';
+  String get noAccount => '还没账户？';
   String get register => '点击注册';
   String get agreement => '登录代表您已同意';
   String get serviceAgreement => '服务协议';

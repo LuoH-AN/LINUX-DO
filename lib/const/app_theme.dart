@@ -59,6 +59,13 @@ class AppTheme {
         ),
       ),
 
+      // 输入框光标
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: AppColors.primary,
+        selectionColor: AppColors.primary,
+        selectionHandleColor: AppColors.primary,
+      ),
+
       // 按钮主题
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -192,6 +199,13 @@ class AppTheme {
           borderSide: BorderSide(color: AppColors.dark.divider),
           borderRadius: BorderRadius.circular(8),
         ),
+      ),
+
+      // 输入框光标
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: AppColors.primary,
+        selectionColor: AppColors.primary,
+        selectionHandleColor: AppColors.primary,
       ),
 
       // 按钮主题

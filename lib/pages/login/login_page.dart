@@ -1,21 +1,114 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:linux_do/const/app_colors.dart';
+import 'package:linux_do/const/app_sizes.dart';
+import 'package:linux_do/const/app_theme.dart';
+import 'package:linux_do/utils/mixins/toast_mixin.dart';
 import '../../const/app_spacing.dart';
 import '../../const/app_images.dart';
 import '../../const/app_const.dart';
 import '../../widgets/li_do_button.dart';
 import 'login_controller.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 class LoginPage extends GetView<LoginController> {
   const LoginPage({super.key});
 
+  /// 显示协议对话框
+  Future<void> showAgreementDialog(String title, String htmlAsset) async {
+    try {
+      final htmlContent = await rootBundle.loadString(htmlAsset);
+      Get.dialog(
+        Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSizes.radiusTiny),
+          ),
+          child: Container(
+            width: double.infinity,
+            height: Get.height * 0.8,
+            padding: EdgeInsets.all(12.w),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      title,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Theme.of(Get.context!).textTheme.titleLarge?.color,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Get.back(),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ],
+                ),
+                8.vGap,
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Html(
+                      data: htmlContent,
+                      style: {
+                        "body": Style(
+                          padding: HtmlPaddings.zero,
+                          color: Theme.of(Get.context!).textTheme.bodyMedium?.color,
+                        ),
+                        "p": Style(
+                          margin: Margins.only(bottom: 4.w),
+                          fontSize: FontSize(AppSizes.fontSmall),
+                        ),
+                        "h1": Style(
+                          margin: Margins.only(bottom: 12.w),
+                          fontSize: FontSize(18.sp),
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                        "h2": Style(
+                          margin: Margins.only(top: 16.w, bottom: 4.w),
+                          fontSize: FontSize(AppSizes.fontNormal),
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primary,
+                        ),
+                        "ul": Style(
+                          margin: Margins.only(bottom: 4.w),
+                          padding: HtmlPaddings.only(left: 16.w),
+                        ),
+                        "li": Style(
+                          margin: Margins.only(bottom: 2.w),
+                          fontSize: FontSize(AppSizes.fontTiny),
+                        ),
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } catch (e) {
+      controller.showSnackbar(
+        title: '加载失败',
+        message: '无法加载$title文件',
+        type: SnackbarType.error,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+
     /// 屏幕高度
     final topHeight = MediaQuery.of(context).size.height * .36;
+    final logoTop = MediaQuery.of(context).size.height * .18;
     return Scaffold(
       body: Material(
         child: Stack(
@@ -32,63 +125,81 @@ class LoginPage extends GetView<LoginController> {
             ),
 
             Positioned(
-              top: 40.w,
-              left: 0,
-              right: 0,
-              child: Row(
+              top: logoTop,
+              left: AppSizes.speceMedium20,
+              right: AppSizes.speceMedium20,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    AppConst.login.title,
-                    style: TextStyle(
-                      fontSize: 28.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
+                  // 加上logo感觉不太好看
+                  // Image.asset(
+                  //   AppImages.getLogo(context),
+                  //   width: 120.w,
+                  // ),
+                  // 4.vGap,
+                  Text.rich(TextSpan(
+                      text: AppConst.login.greetingPhrase,
+                      style: TextStyle(
+                          fontSize: AppSizes.fontLarge,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.white),
+                      children: [
+                        TextSpan(
+                          text: ' ${AppConst.siteName}',
+                          style: TextStyle(
+                              fontSize: AppSizes.fontEnormousb,
+                              fontWeight: FontWeight.bold,
+                              fontFamily: AppFontFamily.dinPro,
+                              color: AppColors.white),
+                        )
+                      ]))
                 ],
               ),
             ),
 
             // 主要内容
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: EdgeInsets.symmetric(horizontal: AppSizes.speceMedium20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   topHeight.vGap,
                   // 账号输入框
                   Container(
-                    height: 44.w,
+                    height: AppSizes.spaceHuge40,
                     decoration: BoxDecoration(
                       border: Border.all(
                         color: theme.hintColor.withValues(alpha: .2),
                         width: 1,
                       ),
-                      borderRadius: BorderRadius.circular(4.w),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusTiny),
                     ),
                     child: TextField(
-                      style: TextStyle(fontSize: 14.sp),
+                      style: TextStyle(fontSize: AppSizes.fontNormal),
                       onChanged: (value) => controller.username.value = value,
                       decoration: InputDecoration(
                         hintText: AppConst.login.accountHint,
                         hintStyle: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: AppSizes.fontNormal,
                           color: theme.hintColor.withValues(alpha: .2),
                         ),
                         filled: false,
                         fillColor: Colors.transparent,
                         border: InputBorder.none,
                         prefixIcon: Padding(
-                          padding: EdgeInsets.all(12.w),
+                          padding: EdgeInsets.all(AppSizes.spaceSmall10),
                           child: Image.asset(
                             AppImages.getInputAccount(context),
-                            width: 20.w,
-                            height: 20.w,
+                            width: AppSizes.iconSmall,
+                            height: AppSizes.iconSmall,
                             color: AppColors.primary,
                           ),
                         ),
                         isDense: true,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: AppSizes.spaceMedium,
+                          vertical: AppSizes.spaceSmall10,
+                        ),
                       ),
                     ),
                   ),
@@ -101,53 +212,56 @@ class LoginPage extends GetView<LoginController> {
                         color: theme.hintColor.withValues(alpha: .2),
                         width: 1,
                       ),
-                      borderRadius: BorderRadius.circular(8.w),
+                      borderRadius: BorderRadius.circular(AppSizes.radiusTiny),
                     ),
                     child: Obx(
                       () => TextField(
-                        style: TextStyle(fontSize: 14.sp),
+                        style: TextStyle(fontSize: AppSizes.fontNormal),
                         onChanged: (value) => controller.password.value = value,
                         obscureText: !controller.isPasswordVisible.value,
                         decoration: InputDecoration(
                           hintText: AppConst.login.passwordHint,
                           hintStyle: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: AppSizes.fontNormal,
                             color: theme.hintColor.withValues(alpha: .2),
                           ),
                           filled: false,
                           fillColor: Colors.transparent,
                           border: InputBorder.none,
                           prefixIcon: Padding(
-                            padding: EdgeInsets.all(12.w),
+                            padding: EdgeInsets.all(AppSizes.spaceNormal),
                             child: Image.asset(
                               AppImages.getInputPassword(context),
-                              width: 20.w,
-                              height: 20.w,
+                              width: AppSizes.iconTiny,
+                              height: AppSizes.iconTiny,
                               color: AppColors.primary,
                             ),
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
                               controller.isPasswordVisible.value
-                                  ? Icons.visibility_off_outlined
-                                  : Icons.visibility_outlined,
+                                  ? CupertinoIcons.eye_fill
+                                  : CupertinoIcons.eye_slash,
                               color: theme.hintColor,
+                              size: AppSizes.spaceMedium,
                             ),
                             onPressed: controller.togglePasswordVisibility,
                           ),
                           isDense: true,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.w),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: AppSizes.spaceMedium,
+                            vertical: AppSizes.spaceSmall10,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                  12.vGap,
                   // 忘记密码和注册
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       TextButton(
-                        onPressed: () {},
+                        onPressed: controller.forgetPassword,
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -155,7 +269,7 @@ class LoginPage extends GetView<LoginController> {
                         child: Text(
                           AppConst.login.forgotPassword,
                           style: TextStyle(
-                            fontSize: 14.sp,
+                            fontSize: AppSizes.fontSmall,
                             color: theme.hintColor,
                           ),
                         ),
@@ -165,12 +279,12 @@ class LoginPage extends GetView<LoginController> {
                           Text(
                             AppConst.login.noAccount,
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: AppSizes.fontSmall,
                               color: theme.hintColor,
                             ),
                           ),
                           TextButton(
-                            onPressed: () {},
+                            onPressed: controller.reigster,
                             style: TextButton.styleFrom(
                               padding: EdgeInsets.zero,
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -178,7 +292,7 @@ class LoginPage extends GetView<LoginController> {
                             child: Text(
                               AppConst.login.register,
                               style: TextStyle(
-                                fontSize: 14.sp,
+                                fontSize: AppSizes.fontSmall,
                                 color: theme.primaryColor,
                               ),
                             ),
@@ -197,7 +311,7 @@ class LoginPage extends GetView<LoginController> {
                       type: LiDoButtonType.primary,
                       size: LiDoButtonSize.large,
                       onPressed: controller.login,
-                      loading: true,
+                      loading: false,
                     ),
                   ),
                   const Spacer(),
@@ -216,6 +330,11 @@ class LoginPage extends GetView<LoginController> {
                             style: TextStyle(
                               color: theme.primaryColor,
                             ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () => showAgreementDialog(
+                                    AppConst.login.serviceAgreement,
+                                    'assets/html/terms-service.html',
+                                  ),
                           ),
                           TextSpan(text: ' ${AppConst.login.and} '),
                           TextSpan(
@@ -223,13 +342,18 @@ class LoginPage extends GetView<LoginController> {
                             style: TextStyle(
                               color: theme.primaryColor,
                             ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () => showAgreementDialog(
+                                    AppConst.login.privacyPolicy,
+                                    'assets/html/privacy-policy.html',
+                                  ),
                           ),
                         ],
                       ),
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  20.vGap,
+                  28.vGap,
                 ],
               ),
             ),
