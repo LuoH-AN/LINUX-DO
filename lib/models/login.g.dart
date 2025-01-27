@@ -9,14 +9,16 @@ part of 'login.dart';
 LoginRequest _$LoginRequestFromJson(Map<String, dynamic> json) => LoginRequest(
       login: json['login'] as String,
       password: json['password'] as String,
-      authenticityToken: json['authenticity_token'] as String,
+      secondFactorMethod: (json['second_factor_method'] as num).toInt(),
+      timezone: json['timezone'] as String,
     );
 
 Map<String, dynamic> _$LoginRequestToJson(LoginRequest instance) =>
     <String, dynamic>{
       'login': instance.login,
       'password': instance.password,
-      'authenticity_token': instance.authenticityToken,
+      'second_factor_method': instance.secondFactorMethod,
+      'timezone': instance.timezone,
     };
 
 LoginResponse _$LoginResponseFromJson(Map<String, dynamic> json) =>

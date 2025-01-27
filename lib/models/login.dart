@@ -5,13 +5,15 @@ part 'login.g.dart';
 class LoginRequest {
   final String login;
   final String password;
-  @JsonKey(name: 'authenticity_token')
-  final String authenticityToken;
+  @JsonKey(name: 'second_factor_method')
+  final int secondFactorMethod;
+  final String timezone;
 
   LoginRequest({
     required this.login,
     required this.password,
-    required this.authenticityToken,
+    required this.secondFactorMethod,
+    required this.timezone,
   });
 
   factory LoginRequest.fromJson(Map<String, dynamic> json) =>

@@ -315,6 +315,18 @@ class LoginPage extends GetView<LoginController> {
                             ),
                           ),
                         ),
+                        12.vGap,
+                        // Web 登录按钮
+                          SizedBox(
+                            width:double.infinity,
+                            height: 44.w,
+                            child: LiDoButton(
+                              text: AppConst.login.webTitle,
+                              type: LiDoButtonType.outline,
+                              size: LiDoButtonSize.large,
+                              onPressed: controller.webLogin,
+                            ),
+                          ),
                         const Spacer(),
                         // 底部协议
                         Center(

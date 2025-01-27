@@ -39,18 +39,10 @@ class App {
 
     Inject.put<GlobalController>(GlobalController());
 
-    // 添加网络拦截器
-    addInterceptor();
-
     // Tag的颜色
     Tag.init();
 
     // 测试
     // UserCache().clear();
-  }
-
-  /// 添加网络拦截器
-  static void addInterceptor() {
-    // TODO: 添加网络拦截器，如token验证、错误处理等
   }
 }

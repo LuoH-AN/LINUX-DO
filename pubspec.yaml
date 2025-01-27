@@ -64,7 +64,10 @@ dependencies:
   shimmer: ^3.0.0
   # HTML渲染
   flutter_html: ^3.0.0-beta.2
+  
   path_provider: ^2.1.2
+  # URL 处理
+  url_launcher: ^6.2.4
 
 dev_dependencies:
   flutter_test:

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:cookie_jar/cookie_jar.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:path_provider/path_provider.dart';
 import 'api_response.dart';
 import 'http_config.dart';
@@ -15,6 +16,9 @@ class HttpClient {
   late final Dio _dio;
   late final CookieJar _cookieJar;
   late final BaseOptions _options;
+  static const String cfClearance = 'cf_clearance';
+  static const String forumSession = '_forum_session';
+  static const String tokenKey = '_t';
 
   /// 获取dio实例
   Dio get dio => _dio;
@@ -54,10 +58,19 @@ class HttpClient {
       sendTimeout: const Duration(milliseconds: HttpConfig.sendTimeout),
       headers: {
         'User-Agent':
-            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept':
+            'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
-        'X-Requested-With': 'XMLHttpRequest',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Origin': HttpConfig.baseUrl,
+        'Referer': HttpConfig.baseUrl,
+        'sec-ch-ua':
+            '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+        'sec-fetch-dest': 'empty',
+        'sec-fetch-mode': 'cors',
+        'sec-fetch-site': 'same-origin',
+        'sec-fetch-user': '?0',
       },
       contentType: 'application/x-www-form-urlencoded',
       responseType: ResponseType.json,
@@ -70,10 +83,13 @@ class HttpClient {
 
   /// 初始化Cookie管理器
   Future<void> _initCookieManager() async {
-    final directory = await getApplicationDocumentsDirectory();
-    final cookiePath = '${directory.path}/.cookies/';
-    _cookieJar =
-        PersistCookieJar(ignoreExpires: true, storage: FileStorage(cookiePath));
+    if (kIsWeb) {
+      _cookieJar = CookieJar();
+    } else {
+      final directory = await getApplicationDocumentsDirectory();
+      final cookiePath = '${directory.path}/.cookies/';
+      _cookieJar = PersistCookieJar(ignoreExpires: true, storage: FileStorage(cookiePath));
+    }
     _dio.interceptors.add(CookieManager(_cookieJar));
   }
 
@@ -90,6 +106,51 @@ class HttpClient {
 
   /// 初始化拦截器
   void _initInterceptors() {
+    
+    /// 处理CF的 cookie
+    _dio.interceptors.add(InterceptorsWrapper(
+      onResponse: (response, handler) async {
+        await _handleCookies(response);
+        return handler.next(response);
+      },
+      onError: (DioException e, handler) async {
+        if (e.response != null) {
+          await _handleCookies(e.response!);
+        }
+        return handler.next(e);
+      },
+    ));
+
+    // 添加错误处理拦截器
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        // 从本地存储获取CSRF Token
+        final csrfToken =
+            StorageManager.getString(AppConst.identifier.csrfToken);
+        if (csrfToken != null && csrfToken.isNotEmpty) {
+          l.e('检查 csrfToken : $csrfToken');
+          options.headers['X-CSRF-Token'] = csrfToken;
+        }
+        return handler.next(options);
+      },
+      onResponse: (response, handler) {
+        try {
+          // 检查并保存CSRF Token
+          final csrfToken = response.headers.value('X-CSRF-Token');
+          if (csrfToken != null) {
+            StorageManager.setData(AppConst.identifier.csrfToken, csrfToken);
+          }
+        } catch (e) {
+          l.e('处理响应头错误: $e');
+        }
+        return handler.next(response);
+      },
+      onError: (error, handler) {
+        _handleError(error);
+        return handler.next(error);
+      },
+    ));
+
     // 添加日志拦截器
     _dio.interceptors.add(
       InterceptorsWrapper(
@@ -113,35 +174,59 @@ class HttpClient {
         },
       ),
     );
+  }
 
-    // 添加错误处理拦截器
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) {
-        // 从本地存储获取CSRF Token
-        final csrfToken =
-            StorageManager.getString(AppConst.identifier.csrfToken);
-        if (csrfToken != null && csrfToken.isNotEmpty) {
-          options.headers['X-CSRF-Token'] = csrfToken;
-        }
-        return handler.next(options);
-      },
-      onResponse: (response, handler) {
-        try {
-          // 检查并保存CSRF Token
-          final csrfToken = response.headers.value('X-CSRF-Token');
-          if (csrfToken != null) {
-            StorageManager.setData(AppConst.identifier.csrfToken, csrfToken);
+  Future<void> _handleCookies(Response response) async {
+    final cookies = response.headers['set-cookie'];
+    if (cookies != null) {
+      for (var cookieString in cookies) {
+        if (cookieString.contains(cfClearance)) {
+          // 解析 CF cookie
+          final cfCookie = _parseCfCookie(cookieString);
+          if (cfCookie != null) {
+            l.e('检查 cfCookie : ${cfCookie.value}');
+            await _saveCfCookie(cfCookie);
+            l.e('已保存新的 CF cookie: ${cfCookie.value}');
+
+            if (cookieString.contains(forumSession)) {
+              final csrfToken = response.headers['x-csrf-token']?.first;
+              if (csrfToken != null) {
+                _dio.options.headers['X-CSRF-Token'] = csrfToken;
+              }
+            }
           }
-        } catch (e) {
-          l.e('处理响应头错误: $e');
         }
-        return handler.next(response);
-      },
-      onError: (error, handler) {
-        _handleError(error);
-        return handler.next(error);
-      },
-    ));
+      }
+    }
+  }
+
+  Cookie? _parseCfCookie(String cookieString) {
+    try {
+      // 解析 cookie 字符串
+      final parts = cookieString.split(';');
+      final mainPart = parts[0].trim();
+      if (mainPart.startsWith(cfClearance)) {
+        final value = mainPart.split('=')[1];
+        return Cookie(cfClearance, value)
+          ..domain = 'linux.do'
+          ..path = '/'
+          ..httpOnly = true
+          ..secure = true;
+      }
+    } catch (e) {
+      l.e('解析 CF cookie 失败: $e');
+    }
+    return null;
+  }
+
+  Future<void> _saveCfCookie(Cookie cookie) async {
+    try {
+      // 保存到 cookie jar
+      await _cookieJar
+          .saveFromResponse(Uri.parse(HttpConfig.baseUrl), [cookie]);
+    } catch (e) {
+      l.e('保存 CF cookie 失败: $e');
+    }
   }
 
   /// 处理错误

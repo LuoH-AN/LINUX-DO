@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../controller/base_controller.dart';
@@ -7,7 +6,6 @@ import '../../routes/app_pages.dart';
 
 class MyTopicsController extends BaseController {
   // 加载状态
-  final isLoading = true.obs;
   final isRefreshing = false.obs;
   final isLoadingMore = false.obs;
 

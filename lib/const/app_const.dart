@@ -81,6 +81,7 @@ class _LoginConst {
   const _LoginConst();
 
   String get title => '登录';
+  String get webTitle => '使用网页授权登录';
   String get greetingPhrase => '欢迎来到';
   String get accountHint => '请输入账号';
   String get passwordHint => '请输入密码';
@@ -99,7 +100,7 @@ class _LoginConst {
   String get networkError => '请检查网络连接或稍后重试';
   String get userInfoError => '用户信息获取失败';
   String get loginSuccessTitle => '登录成功';
-  String get welcomeBack => '欢迎回来，';
+  String get welcomeBack => '欢迎回来';
   String get notImplemented => '此功能暂未开发';
   String get registerTip => '请先前往https://linux.do站点注册';
 }

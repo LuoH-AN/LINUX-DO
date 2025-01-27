@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+
 enum LiDoButtonType {
   primary,   // 主要按钮
   secondary, // 次要按钮
@@ -14,6 +15,8 @@ enum LiDoButtonSize {
   large,   // 大按钮
 }
 
+
+/// 定义个 L站主题的Button
 class LiDoButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -182,18 +185,19 @@ class LiDoButton extends StatelessWidget {
       case LiDoButtonType.outline:
         return OutlinedButton.styleFrom(
           foregroundColor: theme.primaryColor,
+          backgroundColor: Colors.white,
           padding: _getPadding(),
           side: BorderSide(color: theme.primaryColor),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(4.w),
           ),
         ).copyWith(
-          backgroundColor: WidgetStateProperty.resolveWith<Color?>(
+          backgroundColor: WidgetStateProperty.resolveWith<Color>(
             (Set<WidgetState> states) {
               if (states.contains(WidgetState.hovered)) {
                 return theme.primaryColor.withValues(alpha: .05);
               }
-              return null;
+              return Colors.white;
             },
           ),
         );

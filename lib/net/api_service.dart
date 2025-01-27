@@ -13,14 +13,23 @@ abstract class ApiService {
 
   /// 获取CSRF Token
   @GET('session/csrf')
+  @Headers({
+    'X-Requested-With': 'XMLHttpRequest',
+  })
   Future<void> getCsrfToken();
 
   /// 登录
   @POST('session')
-  Future<LoginResponse> login(@Body() LoginRequest loginRequest);
+  @Headers({
+    'Content-Type': 'application/x-www-form-urlencoded',
+  })
+  Future<void> login(@Body() LoginRequest loginRequest);
 
   /// 获取首页话题
   @GET("{path}.json")
+  @Headers({
+    'X-Requested-With': 'XMLHttpRequest'
+  })
   Future<TopicListResponse> getTopics(@Path('path') String path);
 
   /// 获取帖子详情
@@ -31,4 +40,7 @@ abstract class ApiService {
     @Query("track_visit") bool trackVisit = true,
     @Query("forceLoad") bool forceLoad = true,
   });
+
+  @GET('session/current.json')
+  Future<dynamic> getCurrentUser();
 }

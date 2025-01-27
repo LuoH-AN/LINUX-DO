@@ -1,9 +1,9 @@
 class HttpConfig {
   /// 默认配置
   static const String baseUrl = 'https://linux.do/';
-  static const int connectTimeout = 15000;
-  static const int receiveTimeout = 15000;
-  static const int sendTimeout = 15000;
+  static const int connectTimeout = 20000;
+  static const int receiveTimeout = 25000;
+  static const int sendTimeout = 25000;
 
   /// 成功码
   static const int successCode = 200;
