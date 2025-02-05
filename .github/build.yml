@@ -1,0 +1,61 @@
+name: Build and Release Android APK
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      JAVA_VERSION: 17 # Java 版本
+      FLUTTER_VERSION: '3.0.0' # Flutter 版本 (替换为您的项目使用的版本, 确保在 3.0.0 和 4.0.0 之间)
+      ANDROID_SDK_API: 31 # Android SDK API level (根据您的要求设置为 31)
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: 'stable' # 或者 'beta', 'dev'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate build runner files
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: ${{ env.ANDROID_SDK_API }}
+          # (可选) 添加更多组件，例如 build-tools
+          # components: build-tools-${{ env.ANDROID_SDK_API }}
+
+      - name: Build APK
+        run: flutter build apk --release
+
+      - name: Sign APK (如果需要签名)
+        #  您需要配置签名密钥和 keystore
+        #  示例:
+        #  run: |
+        #    echo "${{ secrets.KEYSTORE_FILE }}" > keystore.jks.base64
+        #    base64 -d keystore.jks.base64 > keystore.jks
+        #    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks app-release.apk alias
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: build/app/outputs/apk/release/app-release.apk
