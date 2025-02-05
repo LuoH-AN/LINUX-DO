@@ -71,12 +71,12 @@ class HomePage extends GetView<HomeController> {
                 activeColor: Theme.of(context)
                     .bottomNavigationBarTheme
                     .selectedItemColor,
-                height: 50.h,
+                height: 50.w,
                 curveSize: 60.w,
-                top: -20.h,
+                top: -20.w,
                 elevation: 0.5,
                 cornerRadius: 20.w,
-                badgeMargin: EdgeInsets.only(left: 20.w, bottom: 18.h),
+                badgeMargin: EdgeInsets.only(left: 20.w, bottom: 18.w),
                 items: [
                   _buildTabItem(CupertinoIcons.square_list_fill, '帖子', context),
                   _buildTabItem(CupertinoIcons.square_split_2x2_fill, '分类', context),

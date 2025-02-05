@@ -23,17 +23,23 @@ void main() async {
   // 初始化App
   await App.instance.initial();
 
-  runApp(const MyApp());
+  if (Platform.isMacOS) {
+    runApp(const MyApp(designSize: Size(1024, 768))); 
+  } else {
+    // 手机端
+    runApp(const MyApp(designSize: Size(375, 812)));
+  }
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  final Size designSize;
+  const MyApp({Key? key, required this.designSize}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // 初始化屏幕适配
     return ScreenUtilInit(
-      designSize: const Size(375, 812), // 没有设计稿,自由发挥吧~
+      designSize: designSize, // 没有设计稿,自由发挥吧~
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
