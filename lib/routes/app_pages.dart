@@ -23,7 +23,7 @@ import '../pages/create/create_post_page.dart';
 part 'app_routes.dart';
 
 class AppPages {
-  static const INITIAL = Routes.LOGIN;
+  static const INITIAL = Routes.STARTUP;
   static final routes = <GetPage>[
     /// 启动页
     GetPage(
@@ -101,7 +101,4 @@ class AppPages {
       }),
     ),
   ];
-
-  
-  
 }

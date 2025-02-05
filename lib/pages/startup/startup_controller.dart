@@ -46,17 +46,6 @@ class StartupController extends BaseController {
 
   final pageController = PageController();
 
-  @override
-  void onInit() {
-    bool isFirst = StorageManager.getBool(AppConst.identifier.isFirst) ?? false;
-    if (isFirst) {
-      Get.offAllNamed(Routes.LOGIN);
-      return;
-    } 
-    super.onInit();
-  }
-
-
   void onPageChanged(int index) {
     _currentPage.value = index;
   }

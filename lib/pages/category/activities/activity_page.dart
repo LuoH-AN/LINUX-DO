@@ -236,9 +236,9 @@ class ActivityPage extends GetView<EventController> {
     if (controller.hasError.value) {
       return ViewState.error;
     }
-    if (controller.events.isEmpty) {
-      return ViewState.empty;
-    }
+    // if (controller.events.isEmpty) {
+    //   return ViewState.empty;
+    // }
     return ViewState.content;
   }
 }

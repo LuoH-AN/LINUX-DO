@@ -8,8 +8,10 @@ import 'package:get/get.dart';
 import 'package:linux_do/const/app_const.dart';
 
 import 'app.dart';
+import 'controller/global_controller.dart';
 import 'routes/app_pages.dart';
 import 'const/app_theme.dart';
+import 'utils/storage_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,23 +25,43 @@ void main() async {
   // 初始化App
   await App.instance.initial();
 
-  if (Platform.isMacOS) {
-    runApp(const MyApp(designSize: Size(1024, 768))); 
-  } else {
-    // 手机端
-    runApp(const MyApp(designSize: Size(375, 812)));
+  // 确定初始路由
+  final initialRoute = await _determineInitialRoute();
+
+  Size size = Platform.isMacOS ? const Size(1024, 768) : const Size(375, 812);
+
+  runApp(MyApp(designSize: size, initialRoute: initialRoute));
+} 
+
+Future<String> _determineInitialRoute() async {
+  // 检查是否首次启动
+  final hasLaunched =
+      StorageManager.getBool(AppConst.identifier.isFirst) ?? false;
+  if (!hasLaunched) {
+    return Routes.STARTUP;
   }
+
+  // 检查登录状态
+  final hasLogin = await Get.find<GlobalController>().checkLoginStatus();
+
+  return hasLogin ? Routes.HOME : Routes.LOGIN;
 }
 
 class MyApp extends StatelessWidget {
   final Size designSize;
-  const MyApp({Key? key, required this.designSize}) : super(key: key);
+  final String initialRoute;
+
+  const MyApp({
+    Key? key,
+    required this.designSize,
+    required this.initialRoute,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     // 初始化屏幕适配
     return ScreenUtilInit(
-      designSize: designSize, // 没有设计稿,自由发挥吧~
+      designSize: designSize,
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
@@ -49,15 +71,16 @@ class MyApp extends StatelessWidget {
 
           /// 国际化配置
           localizationsDelegates: GlobalMaterialLocalizations.delegates,
-          supportedLocales: AppConst.supportedLanguages.map((e) => Locale(e)).toList(),
-          
+          supportedLocales:
+              AppConst.supportedLanguages.map((e) => Locale(e)).toList(),
+
           // 主题配置
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: ThemeMode.system, // 跟随系统主题
 
           // 路由配置
-          initialRoute: AppPages.INITIAL,
+          initialRoute: initialRoute, // 使用动态初始路由
           getPages: AppPages.routes,
 
           // 默认转场动画

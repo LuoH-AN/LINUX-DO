@@ -9,13 +9,6 @@ mixin Concatenated {
     return userName.isEmpty;
   }
 
-  int get userId =>
-      StorageManager.getInt(AppConst.identifier.userId) ?? -9;
-
-  bool isUserIdEmpty() {
-    return userId < 1;
-  }
-
   String get name =>
       StorageManager.getString(AppConst.identifier.name) ?? '';
 

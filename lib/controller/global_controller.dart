@@ -64,18 +64,20 @@ class GlobalController extends BaseController with Concatenated {
   return md5.convert(bytes).toString();
 }
 
-  Future<void> checkLoginStatus() async {
+  Future<bool> checkLoginStatus() async {
     try {
       // 首先检查是否有有效的 cookies
       final hasValidCookies = await HttpClient.getInstance().hasValidCookies();
       if (!hasValidCookies) {
         _isLogin.value = false;
-        return;
+        return false;
       }
 
       _isLogin.value = true;
+      return true;
 
       // // 如果有有效的 cookies，再尝试请求接口验证
+
       // try {
       //   final response = await httpClient.get('unread.json');
       //   _isLogin.value = response.isSuccess;
@@ -86,6 +88,7 @@ class GlobalController extends BaseController with Concatenated {
     } catch (e) {
       l.e('检查登录状态失败: $e');
       _isLogin.value = false;
+      return false;
     }
   }
 
@@ -97,11 +100,8 @@ class GlobalController extends BaseController with Concatenated {
     try {
       final response = await _apiService.getCurrentUser(userName);
       _userInfo.value = response;
-      /// 打印用户所有信息
-      l.d('用户信息: ${response.user?.toJson()}');
     } catch (e, stack) {
       l.e('获取用户信息失败: $e\n$stack');
-      showError('获取用户信息失败');
     }
   }
 }

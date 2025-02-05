@@ -39,7 +39,7 @@ class AppConst {
   static const stateHint = _StateConst();
 
   /// 标识常量
-  static const identifier = _Identifier();
+  static final identifier = _Identifier();
 
   /// 登录页面相关
   static const login = _LoginConst();
@@ -132,11 +132,12 @@ class _Identifier {
   String get theme => 'theme';
   String get language => 'language';
   String get isFirst => 'isFirst';
-  String get csrfToken => 'csrfToken';
   String get username => 'username';
-  String get clientId => 'clientId';
-  String get userId => 'userId';
   String get name => 'name';
+  String get userId => 'userId';
+  String get isLogin => 'isLogin';
+  String get csrfToken => 'csrfToken';
+  String get clientId => 'clientId';
 }
 
 /// 登录页面文本

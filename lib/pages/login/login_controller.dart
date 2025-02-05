@@ -20,24 +20,6 @@ class LoginController extends BaseController {
   final isPasswordVisible = false.obs;
   final isChecking = false.obs;
 
-  @override
-  void onInit() async {
-    super.onInit();
-    // 检查是否已登录
-    isChecking.value = true;
-    try {
-      await _globalController.checkLoginStatus();
-      if (_globalController.isLogin) {
-        isChecking.value = false;
-        Get.offAllNamed(Routes.HOME);
-      }
-    } catch (e) {
-      l.e('检查登录状态失败: $e');
-    } finally {
-      isChecking.value = false;
-    }
-  }
-
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }

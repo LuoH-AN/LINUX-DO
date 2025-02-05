@@ -26,10 +26,10 @@ class WebPage extends StatefulWidget {
     try {
       // 清理 Cookies
       await CookieManager.instance().deleteAllCookies();
-      
+
       // 清理缓存和存储
       await InAppWebViewController.clearAllCache();
-      
+
       l.d('WebView 缓存已清理');
     } catch (e) {
       l.e('清理 WebView 缓存失败: $e');
@@ -61,8 +61,8 @@ class _WebPageState extends State<WebPage> {
   Future<void> _initCookieJar() async {
     final directory = await getApplicationDocumentsDirectory();
     final cookiePath = '${directory.path}/.cookies/';
-    _cookieJar = PersistCookieJar(
-        ignoreExpires: true, storage: FileStorage(cookiePath));
+    _cookieJar =
+        PersistCookieJar(ignoreExpires: true, storage: FileStorage(cookiePath));
     setState(() {});
   }
 
@@ -78,7 +78,7 @@ class _WebPageState extends State<WebPage> {
       bool hasTokenCookie = false;
       bool hasSessionCookie = false;
       bool hasCfCookie = false;
-      bool needsCfVerification = false;  // 添加标志位判断是否需要 CF 验证
+      bool needsCfVerification = false; // 添加标志位判断是否需要 CF 验证
 
       // 检查是否需要 Cloudflare 验证
       // 网站使用了 Cloudflare 的 DDoS 保护才需要获取这个
@@ -125,7 +125,8 @@ class _WebPageState extends State<WebPage> {
       }
 
       // 根据是否需要 CF 验证来判断登录条件
-      bool isLoginSuccess = hasTokenCookie && hasSessionCookie && 
+      bool isLoginSuccess = hasTokenCookie &&
+          hasSessionCookie &&
           (!needsCfVerification || (needsCfVerification && hasCfCookie));
 
       if (isLoginSuccess) {
@@ -138,15 +139,19 @@ class _WebPageState extends State<WebPage> {
         ''');
 
         if (result != null) {
-          await StorageManager.setData(AppConst.identifier.csrfToken, result.toString());
+          await StorageManager.setData(
+              AppConst.identifier.csrfToken, result.toString());
           l.d('已保存 CSRF Token: $result');
         }
 
         // l.d('登录成功');
         // await Future.delayed(const Duration(milliseconds: 500));
         if (mounted) {
-          Get.find<GlobalController>().fetchUserInfo();
-          Get.back(result: true);
+          Future.delayed(const Duration(milliseconds: 200), () {
+            Get.find<GlobalController>().fetchUserInfo();
+            Get.back(result: true);
+          });
+          
         }
       } else {
         // 如果没有获取到所需的 cookies，尝试请求相关接口
@@ -231,11 +236,7 @@ class _WebPageState extends State<WebPage> {
             shouldOverrideUrlLoading: (controller, navigationAction) async {
               final uri = navigationAction.request.url!;
 
-              if ([
-                'about',
-                'data',
-                'javascript'
-              ].contains(uri.scheme)) {
+              if (['about', 'data', 'javascript'].contains(uri.scheme)) {
                 return NavigationActionPolicy.ALLOW;
               }
 
@@ -254,7 +255,8 @@ class _WebPageState extends State<WebPage> {
                 'recaptcha.net',
               ];
 
-              bool isAllowed = allowedDomains.any((domain) => uri.host.endsWith(domain));
+              bool isAllowed =
+                  allowedDomains.any((domain) => uri.host.endsWith(domain));
 
               if (isAllowed) {
                 return NavigationActionPolicy.ALLOW;
@@ -263,8 +265,7 @@ class _WebPageState extends State<WebPage> {
               return NavigationActionPolicy.CANCEL;
             },
           ),
-          if (isLoading)
-            const Center(child: DisSquareLoading()),
+          if (isLoading) const Center(child: DisSquareLoading()),
           if (_error != null)
             Center(
               child: Column(
