@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      JAVA_VERSION: 17 # Java 版本
-      FLUTTER_VERSION: '3.0.0' # Flutter 版本 (替换为您的项目使用的版本, 确保在 3.0.0 和 4.0.0 之间)
-      ANDROID_SDK_API: 31 # Android SDK API level (根据您的要求设置为 31)
+      JAVA_VERSION: 17
+      FLUTTER_VERSION: '3.0.0' # 设置 Flutter 版本为 3.0.x (请根据实际情况调整)
+      ANDROID_SDK_API: 31
+      APPLICATION_ID: linux.do.mobile.app # 设置包名
 
     steps:
       - uses: actions/checkout@v3
@@ -40,8 +41,10 @@ jobs:
         uses: android-actions/setup-android@v2
         with:
           api-level: ${{ env.ANDROID_SDK_API }}
-          # (可选) 添加更多组件，例如 build-tools
-          # components: build-tools-${{ env.ANDROID_SDK_API }}
+
+      - name: Change application ID
+        run: |
+          sed -i 's|applicationId ".*"|applicationId "${{ env.APPLICATION_ID }}"|g' android/app/build.gradle
 
       - name: Build APK
         run: flutter build apk --release
