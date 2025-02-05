@@ -157,7 +157,7 @@ flutter build macos --release
 
 ## 📜 开源协议
 
-本项目遵循 MIT 协议。
+~~本项目遵循 MIT 协议。~~
 
 ## 🎭 写在最后
 
