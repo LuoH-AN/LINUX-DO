@@ -1,14 +1,22 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:linux_do/const/app_colors.dart';
-import 'package:linux_do/utils/expand/datetime_expand.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:linux_do/widgets/dis_button.dart';
 import 'package:linux_do/widgets/state_view.dart';
+import '../../../const/app_const.dart';
 import '../../../const/app_spacing.dart';
+import '../../../utils/tag.dart';
 import '../../../widgets/cached_image.dart';
+import '../../../widgets/dis_loading.dart';
 import 'topic_detail_controller.dart';
 import '../../../models/topic_detail.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
+import 'widgets/page_heder.dart';
+import 'widgets/post_content.dart';
+import 'widgets/post_header.dart';
+import 'widgets/post_footer.dart';
 
 class TopicDetailPage extends GetView<TopicDetailController> {
   const TopicDetailPage({super.key});
@@ -17,12 +25,28 @@ class TopicDetailPage extends GetView<TopicDetailController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Obx(() => Text(controller.topicDetail.value?.title ?? '帖子详情')),
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        scrolledUnderElevation: 0.0,
+        centerTitle: false,
+        leading: IconButton(
+          icon: Icon(
+            CupertinoIcons.chevron_left_circle,
+            size: 24.w,
+          ),
+          onPressed: () => Get.back(),
+        ),
+        title: _buildHeader(context),
         actions: [
           IconButton(
-            icon: const Icon(Icons.share),
-            onPressed: () {},
-          ),
+            icon: Obx(() => Icon(
+                  controller.isFooderVisible.value
+                      ? CupertinoIcons.chevron_up_circle
+                      : CupertinoIcons.chevron_down_circle,
+                )),
+            onPressed: () {
+              controller.isFooderVisible.toggle();
+            },
+          )
         ],
       ),
       body: Obx(() {
@@ -37,189 +61,374 @@ class TopicDetailPage extends GetView<TopicDetailController> {
     );
   }
 
+  Widget _buildHeader(BuildContext context) {
+    return PageHeader(controller: controller);
+  }
+
   Widget _contentWidget(BuildContext context) {
-    final topic = controller.topicDetail.value;
+    final topic = controller.topic.value;
     if (topic == null) return Container();
-    final theme = Theme.of(context);
-    return ListView.builder(
-      itemCount: topic.postStream?.posts?.length ?? 0,
-      itemBuilder: (context, index) {
-        final post = topic.postStream?.posts?[index];
-        if (post == null) return const SizedBox();
-        return Card(
-          margin: EdgeInsets.symmetric(
-            horizontal: 19.w,
-            vertical: 4.h,
+
+    return Stack(
+      children: [
+        Positioned(
+          child: Obx(() => ScrollablePositionedList.builder(
+                key: PageStorageKey('topic_detail_${topic.id}'),
+                itemScrollController: controller.itemScrollController,
+                itemPositionsListener: controller.itemPositionsListener,
+                initialScrollIndex: controller.initialScrollIndex.value,
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: controller.replyTree.length + 2,
+                minCacheExtent: 300,
+                addAutomaticKeepAlives: false,
+                addRepaintBoundaries: false,
+                itemBuilder: (context, index) {
+                  // 头部加载指示器
+                  if (index == 0) {
+                    return Obx(() => controller.hasPrevious.value
+                        ? Container(
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
+                            alignment: Alignment.center,
+                            child: DisRefreshLoading())
+                        : const SizedBox());
+                  }
+
+                  // 底部加载指示器
+                  if (index == controller.replyTree.length + 1) {
+                    return Obx(() => controller.hasMore.value
+                        ? Container(
+                            padding: EdgeInsets.symmetric(vertical: 10.h),
+                            alignment: Alignment.center,
+                            child: DisRefreshLoading())
+                        : const SizedBox());
+                  }
+
+                  // 帖子内容
+                  final node = controller.replyTree[index - 1];
+                  return _buildPostItem(context, node);
+                },
+              )),
+        ),
+        AnimatedPositioned(
+          duration: const Duration(milliseconds: 300),
+          top: controller.isFooderVisible.value ? 0.w : -200.w,
+          left: 0,
+          right: 0,
+          child: Container(
+            child: _buildExpand(context, topic),
           ),
-          child: Padding(
+        ),
+        // 回复输入框
+        Obx(() => AnimatedPositioned(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              bottom: controller.isReplying.value ? 0 : -300.h,
+              left: 0,
+              right: 0,
+              child: _buildReplyInput(context, topic),
+            )),
+      ],
+    );
+  }
+
+  Widget _buildPostItem(BuildContext context, PostNode node) {
+    return Card(
+      elevation: node.post.replyToPostNumber == null ? 2.2 : 0,
+      margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
             padding: EdgeInsets.all(12.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Row(
-                        children: [
-                          CachedImage(
-                              imageUrl: post.getAvatarUrl(),
-                              width: 40.w,
-                              height: 40.w,
-                              circle: !post.isWebMaster(),
-                              borderRadius: BorderRadius.circular(4.w),
-                              placeholder: const CircularProgressIndicator(
-                                color: AppColors.primary,
-                              ),
-                              errorWidget: Icon(
-                                Icons.account_circle,
-                                size: 40.w,
-                                color: theme.iconTheme.color
-                                    ?.withValues(alpha: .5),
-                              ),
-                            ),
-                          8.hGap,
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  post.displayUsername ?? '',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                      fontSize: 16.sp,
-                                      fontWeight: FontWeight.bold,
-                                      color: !post.isWebMaster()
-                                          ? theme.textTheme.titleMedium?.color
-                                          : AppColors.primary),
-                                ),
-                                if (post.userTitle?.isNotEmpty == true)
-                                  Text(
-                                    post.userTitle!,
-                                    style: theme.textTheme.bodyMedium?.copyWith(
-                                      fontSize: 12.sp,
-                                    ),
-                                  ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      '#${post.postNumber}',
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 12.sp,
-                      ),
-                    ),
-                  ],
-                ),
-                8.vGap,
-                Html(
-                  data: post.cooked ?? '',
-                  style: {
-                    "body": Style(
-                      fontSize: FontSize(14.sp),
-                      margin: Margins.zero,
-                      padding: HtmlPaddings.zero,
-                      color: theme.textTheme.bodyLarge?.color,
-                    ),
-                    "a": Style(
-                      color: theme.primaryColor,
-                    ),
-                    "img": Style(
-                      width: Width(100, Unit.percent),
-                      height: Height.auto(),
-                      margin: Margins.zero,
-                      padding: HtmlPaddings.zero,
-                      display: Display.block,
-                    ),
-                    "p": Style(
-                      margin: Margins.zero,
-                      padding: HtmlPaddings.zero,
-                    ),
-                    "img.emoji": Style(
-                      width: Width(16.sp),
-                      height: Height(16.sp),
-                      margin: Margins.only(left: 2.sp, right: 2.sp),
-                      verticalAlign: VerticalAlign.middle,
-                      display: Display.inlineBlock,
-                    ),
-                  },
-                  extensions: [
-                    TagExtension(
-                      tagsToExtend: {"img"},
-                      builder: (ExtensionContext context) {
-                        final src = context.attributes['src'];
-                        if (src == null) return const SizedBox();
-                        
-                        // 检查是否是表情,目前暂时用这样的方式来简单处理
-                        final isEmoji = context.classes.contains('emoji');
-                        final isEmojiPath = src.contains('/uploads/default/original/3X/') || 
-                                          src.contains('/images/emoji/twitter/') ||
-                                          src.contains('/images/emoji/apple/');
-                        
-                        if (isEmoji || isEmojiPath) {
-                          return Image.network(
-                            src,
-                            width: 20.sp,
-                            height: 20.sp,
-                            fit: BoxFit.contain,
-                          );
-                        }
+                PostHeader(post: node.post),
+                12.vGap,
+                PostContent(node: node),
+                12.vGap,
+                PostFooter(post: node.post),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-                        return CachedImage(
-                          imageUrl: src,
-                          width: double.infinity,
-                          placeholder: Container(),
-                          errorWidget: Icon(
-                            Icons.broken_image_outlined,
-                            size: 40.w,
-                            color: theme.iconTheme.color?.withValues(alpha: .5),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+  Widget _buildExpand(BuildContext context, TopicDetail topic) {
+    final theme = Theme.of(context);
+    final createUser = topic.details?.createdBy;
+
+    return Container(
+      padding: EdgeInsets.only(left: 16.w, right: 16.w, bottom: 12.w),
+      decoration: BoxDecoration(
+        color: theme.appBarTheme.backgroundColor,
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withValues(alpha: 0.2),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(12.w),
+          bottomRight: Radius.circular(12.w),
+        ),
+      ),
+      child: Row(
+        children: [
+          CachedImage(
+            imageUrl: createUser?.getAvatarUrl(),
+            width: 25.w,
+            height: 25.w,
+            circle: !(createUser?.isWebMaster() ?? false),
+            borderRadius: BorderRadius.circular(4.w),
+            placeholder: const CircularProgressIndicator(
+              color: AppColors.primary,
+            ),
+            errorWidget: Icon(
+              Icons.account_circle,
+              size: 25.w,
+              color: theme.iconTheme.color?.withValues(alpha: 0.5),
+            ),
+          ),
+          4.hGap,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  createUser?.name?.isEmpty ?? true
+                      ? createUser?.username ?? ''
+                      : createUser?.name ?? '',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                      fontSize: 10.sp,
+                      color: createUser?.isWebMaster() ?? false
+                          ? AppColors.primary
+                          : theme.textTheme.bodyMedium?.color,
+                      fontWeight: createUser?.isWebMaster() ?? false
+                          ? FontWeight.bold
+                          : FontWeight.normal),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                8.vGap,
+
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      _getRelativeTime(post),
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        fontSize: 12.sp,
+                    if (topic.postsCount != null) ...[
+                      Icon(
+                        Icons.article_outlined,
+                        size: 12.sp,
+                        color: Theme.of(context).hintColor,
                       ),
-                    ),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.thumb_up_outlined,
-                          size: 16.sp,
-                          color: theme.iconTheme.color?.withValues(alpha: .5),
+                      2.hGap,
+                      Text(
+                        '${topic.postsCount}',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: Theme.of(context).hintColor,
                         ),
-                        4.hGap,
+                      ),
+                      8.hGap,
+                    ],
+                    if (topic.participantsCount != null) ...[
+                      Icon(
+                        Icons.remove_red_eye_outlined,
+                        size: 12.sp,
+                        color: Theme.of(context).hintColor,
+                      ),
+                      2.hGap,
                         Text(
-                          '${post.score ?? 0}',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            fontSize: 12.sp,
-                          ),
+                        '${topic.participantsCount}',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: Theme.of(context).hintColor,
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ],
                 ),
               ],
             ),
           ),
-        );
-      },
+          SizedBox(
+            child: IconButton(
+              onPressed: () {
+                controller.startReply(topic.currentPostNumber, topic.title);
+              },
+              icon: Icon(CupertinoIcons.reply, size: 22.w),
+            ),
+          )
+        ],
+      ),
     );
   }
 
-  String _getRelativeTime(Post post) {
-    final time = post.createdAt;
-    if (time == null) return '';
-    return DateTime.parse(time).friendlyDateTime;
+  Widget _buildReplyInput(BuildContext context, TopicDetail topic) {
+    final theme = Theme.of(context);
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
+    return Container(
+      padding: EdgeInsets.only(
+        bottom: bottomPadding + MediaQuery.of(context).padding.bottom,
+      ),
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(12.w),
+          topRight: Radius.circular(12.w),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: theme.shadowColor.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // 顶部拖动条
+          Container(
+            margin: EdgeInsets.symmetric(vertical: 8.w),
+            width: 36.w,
+            height: 4.w,
+            decoration: BoxDecoration(
+              color: theme.dividerColor.withValues(alpha: 0.9),
+              borderRadius: BorderRadius.circular(2.w),
+            ),
+          ),
+          // 回复引用
+          Obx(() {
+            if (controller.replyToPostNumber.value == null) {
+              return const SizedBox();
+            }
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 16.w),
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: theme.cardColor,
+                borderRadius: BorderRadius.circular(12.w),
+                border: Border.all(
+                  color: theme.dividerColor.withValues(alpha: 0.1),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.reply, size: 16.sp, color: theme.hintColor),
+                      8.hGap,
+                      Text(
+                        '回复 #${controller.replyToPostNumber}',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          color: theme.hintColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const Spacer(),
+                      IconButton(
+                        onPressed: controller.cancelReply,
+                        icon: Icon(
+                          CupertinoIcons.clear,
+                          size: 18.sp,
+                          color: theme.hintColor,
+                        ),
+                        style: IconButton.styleFrom(
+                          padding: EdgeInsets.all(4.w),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (controller.replyPostTitle.value != null) ...[
+                    4.vGap,
+                    Text(
+                      controller.replyPostTitle.value!
+                          .replaceAll(RegExp(r'<[^>]*>'), ''),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: theme.hintColor,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            );
+          }),
+          // 输入区域
+          Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              children: [
+                Container(
+                  constraints: BoxConstraints(
+                    minHeight: 120.h,
+                    maxHeight: 200.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: theme.cardColor,
+                    borderRadius: BorderRadius.circular(12.w),
+                    border: Border.all(
+                      color: theme.dividerColor.withValues(alpha: 0.1),
+                    ),
+                  ),
+                  child: TextField(
+                    onChanged: (value) {
+                      controller.replyContent.value = value;
+                      controller.updateTypingTime();
+                    },
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      height: 1.4,
+                    ),
+                    decoration: InputDecoration(
+                        hintText: AppConst.posts.replyPlaceholder,
+                        hintStyle: TextStyle(
+                          fontSize: 13.sp,
+                          color: theme.hintColor.withValues(alpha: 0.3),
+                        ),
+                        contentPadding: EdgeInsets.all(16.w),
+                        border: InputBorder.none,
+                        isDense: true,
+                        fillColor: AppColors.transparent),
+                  ),
+                ),
+                16.vGap,
+                // 发送按钮
+                Obx(() => AnimatedScale(
+                      scale: controller.replyContent.value.isEmpty ? 0.8 : 1.0,
+                      duration: const Duration(milliseconds: 200),
+                      child: AnimatedOpacity(
+                        opacity: controller.replyContent.value.isEmpty ? 0 : 1,
+                        duration: const Duration(milliseconds: 200),
+                        child: SizedBox(
+                          width: double.infinity,
+                          height: 44.h,
+                          child: DisButton(
+                              text: AppConst.posts.send,
+                              onPressed: controller.sendReply,
+                              type: ButtonType.transform,
+                              useWidthAnimation: true,
+                              loading: controller.isSending.value),
+                        ),
+                      ),
+                    )),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
+
+

@@ -13,17 +13,8 @@ abstract class Routes {
   // 设置页面
   static const SETTINGS = '/settings';
 
-  // 搜索页面
-  static const SEARCH = '/search';
-
-  // 消息页面
-  static const MESSAGE = '/message';
-
   // 登录页面
   static const LOGIN = '/login';
-
-  // 注册页面
-  static const REGISTER = '/register';
 
   // 主题详情页
   static const TOPIC_DETAIL = '/topic/detail';
@@ -33,4 +24,10 @@ abstract class Routes {
 
   // 主题列表页面
   static const TOPICS = '/topics';
+
+  // WebView页面
+  static const WEBVIEW = '/webview';
+
+  // 聊天详情页
+  static const CHAT_DETAIL = '/chat/detail';
 }

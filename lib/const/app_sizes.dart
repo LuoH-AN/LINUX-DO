@@ -25,6 +25,7 @@ class AppSizes {
   static double get spaceLarge => 24.w;
   static double get spaceHuge => 32.w;
   static double get spaceHuge40 => 40.w;
+  static double get spaceHuge44 => 44.w;
   static double get spaceGiant => 48.w;
 
   /// 圆角

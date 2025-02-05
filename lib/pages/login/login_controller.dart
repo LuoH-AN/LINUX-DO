@@ -8,11 +8,9 @@ import '../../utils/mixins/toast_mixin.dart';
 import '../../utils/log.dart';
 import '../../controller/global_controller.dart';
 import 'package:dio/dio.dart';
-import '../../net/http_config.dart';
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
-import 'package:flutter/foundation.dart';
-import '../../utils/web_stub.dart' if (dart.library.html) '../../utils/web.dart';
 import 'dart:async';
+
+import '../web_page.dart';
 
 class LoginController extends BaseController {
   final ApiService _apiService = Get.find<ApiService>();
@@ -20,13 +18,23 @@ class LoginController extends BaseController {
   final username = ''.obs;
   final password = ''.obs;
   final isPasswordVisible = false.obs;
+  final isChecking = false.obs;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     // 检查是否已登录
-    if (_globalController.isLogin) {
-      Get.offAllNamed(Routes.HOME);
+    isChecking.value = true;
+    try {
+      await _globalController.checkLoginStatus();
+      if (_globalController.isLogin) {
+        isChecking.value = false;
+        Get.offAllNamed(Routes.HOME);
+      }
+    } catch (e) {
+      l.e('检查登录状态失败: $e');
+    } finally {
+      isChecking.value = false;
     }
   }
 
@@ -34,60 +42,29 @@ class LoginController extends BaseController {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
 
-  /// 检查登录状态
-  Future<void> checkLoginStatus() async {
-    try {
-      // 等待一段时间让 cookie 生效
-      await Future.delayed(const Duration(seconds: 1));
-      
-      final response = await _apiService.getCurrentUser();
-      if (response != null) {
-        l.e('用户信息 $response');
-        // 登录成功,保存用户信息
-        Get.offAllNamed(Routes.HOME);
-      }
-    } catch (e) {
-      showSnackbar(
-        title: AppConst.login.loginFailedTitle,
-        message: '请先在浏览器中完成登录',
-        type: SnackbarType.error,
-      );
-    }
-  }
-
   void webLogin() async {
-    final url = Uri.parse('${HttpConfig.baseUrl}login');
-    if (kIsWeb) {
-      openNewWindow(url.toString(), '_blank');
-      // 检查登录状态
-      Timer.periodic(const Duration(seconds: 2), (timer) async {
-        await checkLoginStatus();
-        timer.cancel();
-      });
-    } else {
-      if (await url_launcher.canLaunchUrl(url)) {
-        await url_launcher.launchUrl(
-          url,
-          mode: url_launcher.LaunchMode.externalApplication,
-        );
-        // 用户从浏览器返回后检查登录状态
-        await checkLoginStatus();
-      } else {
+    final result = await Get.to(() => const WebPage());
+    if (result == true) {
+      isLoading.value = true;
+      try {
+        // 保存登录状态
+        Get.find<GlobalController>().setIsLogin(true);
+        // 跳转到首页
+        Get.offAllNamed('/home');
+      } catch (e) {
         showSnackbar(
           title: AppConst.login.loginFailedTitle,
-          message: '无法打开浏览器',
+          message: AppConst.login.loginFailedMessage,
           type: SnackbarType.error,
         );
+      } finally {
+        isLoading.value = false;
       }
     }
   }
 
   Future<void> login() async {
-    // 检查是否已登录
-    if (_globalController.isLogin) {
-      Get.offAllNamed(Routes.HOME);
-      return;
-    }
+    await _apiService.getTopics('latest');
 
     if (username.value.isEmpty) {
       showSnackbar(
@@ -114,27 +91,26 @@ class LoginController extends BaseController {
 
       // 2. 构建登录请求
       final loginRequest = LoginRequest(
-        login: username.value,
-        password: password.value,
-        secondFactorMethod: 1,
-        timezone: 'Asia/Shanghai'
-      );
+          login: username.value,
+          password: password.value,
+          secondFactorMethod: 1,
+          timezone: 'Asia/Shanghai');
 
       // 3. 发起登录请求
       await _apiService.login(loginRequest);
 
-        // 设置登录状态
-        _globalController.setIsLogin(true);
+      // 设置登录状态
+      _globalController.setIsLogin(true);
 
-        showSnackbar(
-          title: AppConst.login.loginSuccessTitle,
-          message: AppConst.login.welcomeBack,
-          type: SnackbarType.success,
-        );
+      showSnackbar(
+        title: AppConst.login.loginSuccessTitle,
+        message: AppConst.login.welcomeBack,
+        type: SnackbarType.success,
+      );
 
-        // 延迟跳转，让用户看到成功提示
-        await Future.delayed(const Duration(milliseconds: 1500));
-        Get.offAllNamed(Routes.HOME);
+      // 延迟跳转，让用户看到成功提示
+      await Future.delayed(const Duration(milliseconds: 1500));
+      Get.offAllNamed(Routes.HOME);
     } catch (e) {
       l.e('登录失败: $e');
       if (e is DioException) {

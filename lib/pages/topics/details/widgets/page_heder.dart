@@ -1,0 +1,68 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+
+import '../../../../utils/tag.dart';
+import '../topic_detail_controller.dart';
+
+class PageHeader extends StatelessWidget {
+  const PageHeader({
+    super.key,
+    required this.controller,
+  });
+
+  final TopicDetailController controller;
+
+  @override
+  Widget build(BuildContext context) {
+    return Obx(()=> Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        controller.topic.value?.title == null
+            ? const SizedBox()
+            : Text(
+                controller.topic.value?.title ?? '',
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).textTheme.titleMedium?.color,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+        if (controller.topic.value?.tags != null &&
+            controller.topic.value?.tags!.isNotEmpty == true)
+          Padding(
+            padding: EdgeInsets.only(top: 2.w),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: (controller.topic.value?.tags ?? []).map((tag) {
+                  final color = Tag.getTagColors(tag);
+                  return Container(
+                    margin: EdgeInsets.only(right: 8.w),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.4.w),
+                    decoration: BoxDecoration(
+                      color: color.backgroundColor,
+                      border: Border.all(
+                        color: color.backgroundColor,
+                        width: 0.5,
+                      ),
+                      borderRadius: BorderRadius.circular(4.w),
+                    ),
+                    child: Text(
+                      tag,
+                      style: TextStyle(
+                        fontSize: 8.w,
+                        color: color.textColor,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),  
+      ],
+    ));
+  }
+}

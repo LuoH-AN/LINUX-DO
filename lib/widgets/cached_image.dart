@@ -1,5 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../const/app_colors.dart';
 
 class CachedImage extends StatelessWidget {
   final String? imageUrl;
@@ -11,6 +14,8 @@ class CachedImage extends StatelessWidget {
   final Widget? placeholder;
   final Widget? errorWidget;
   final bool circle;
+  final bool showBorder;
+  final Color? borderColor;
 
   const CachedImage({
     super.key,
@@ -23,6 +28,8 @@ class CachedImage extends StatelessWidget {
     this.placeholder,
     this.errorWidget,
     this.circle = false,
+    this.showBorder = false,
+    this.borderColor = AppColors.primary,
   });
 
   @override
@@ -57,8 +64,9 @@ class CachedImage extends StatelessWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? Theme.of(context).cardColor,
         borderRadius: circle 
-          ? BorderRadius.circular(width != null ? width! / 2 : height! / 2)
+          ? BorderRadius.circular(width != null ? width!.w / 2 : height!.w / 2)
           : borderRadius,
+        border: showBorder ? Border.all(color: borderColor ?? AppColors.primary, width: 1.w) : null,
       ),
       child: image,
     );
@@ -71,7 +79,7 @@ class CachedImage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.grey.withValues(alpha: 0.2),
         borderRadius: circle 
-          ? BorderRadius.circular(width != null ? width! / 2 : height! / 2)
+          ? BorderRadius.circular(width != null ? width!.w / 2 : height!.w / 2)
           : borderRadius,
       ),
       child: Icon(
@@ -89,12 +97,12 @@ class CachedImage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.grey.withValues(alpha: .1),
         borderRadius: circle 
-          ? BorderRadius.circular(width != null ? width! / 2 : height! / 2)
+          ? BorderRadius.circular(width != null ? width!.w / 2 : height!.w / 2)
           : borderRadius,
       ),
       child: Icon(
         Icons.broken_image_outlined,
-        size: (width ?? height ?? 24) * 0.5,
+        size: (width ?? height ?? 24.w) * 0.5,
         color: Colors.grey.withValues(alpha: .3),
       ),
     );

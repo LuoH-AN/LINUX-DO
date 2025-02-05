@@ -258,4 +258,40 @@ class Poster {
 
   factory Poster.fromJson(Map<String, dynamic> json) => _$PosterFromJson(json);
   Map<String, dynamic> toJson() => _$PosterToJson(this);
+}
+
+class TopicModel {
+  final String id;
+  final String title;
+  final String content;
+  final String author;
+  final DateTime createdAt;
+
+  TopicModel({
+    required this.id,
+    required this.title,
+    required this.content,
+    required this.author,
+    required this.createdAt,
+  });
+
+  factory TopicModel.fromJson(Map<String, dynamic> json) {
+    return TopicModel(
+      id: json['id'] as String,
+      title: json['title'] as String,
+      content: json['content'] as String,
+      author: json['author'] as String,
+      createdAt: DateTime.parse(json['created_at'] as String),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'title': title,
+      'content': content,
+      'author': author,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
 } 

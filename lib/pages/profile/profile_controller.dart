@@ -1,79 +1,73 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:linux_do/net/api_service.dart';
+import 'package:linux_do/pages/profile/tabs/message_controller.dart';
+import 'package:linux_do/routes/app_pages.dart';
 import '../../const/app_const.dart';
 import '../../controller/base_controller.dart';
 import '../../controller/global_controller.dart';
 import '../../utils/log.dart';
+import '../../utils/mixins/concatenated.dart';
 import '../../utils/storage_manager.dart';
+import 'tabs/activity_controller.dart';
+import 'tabs/badge_controller.dart';
+import 'tabs/notification_controller.dart';
+import 'tabs/summary_controller.dart';
+import 'tabs/activity_page.dart';
+import 'tabs/badge_page.dart';
+import 'tabs/message_page.dart';
+import 'tabs/notification_page.dart';
+import 'tabs/summary_page.dart';
 
-class ProfileController extends BaseController {
-  // 用户信息
-  final RxMap<String, dynamic> userInfo = <String, dynamic>{}.obs;
+class ProfileController extends BaseController with Concatenated {
+  final ApiService _apiService = Get.find();
+
+  final _onlineMode = true.obs;
+  final _selectedIndex = 0.obs;
+
+  int get selectedIndex => _selectedIndex.value;
+  set selectedIndex(int index) => _selectedIndex.value = index;
+
+  bool get onlineMode => _onlineMode.value;
+  set onlineMode(bool b) => _onlineMode.value = b;
+
+  final TextEditingController statusController = TextEditingController();
+  final TextEditingController emojiController = TextEditingController();
+  final RxBool showEmoji = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchUserInfo();
+    // 初始化子控制器
+    Get.lazyPut(() => SummaryController());
+    Get.lazyPut(() => ActivityController());
+    Get.lazyPut(() => NotificationController());
+    Get.lazyPut(() => MessageController());
+    Get.lazyPut(() => BadgeController());
   }
 
-  // 获取用户信息
-  Future<void> fetchUserInfo() async {
-    try {
-      // TODO: 从API获取用户信息
-      userInfo.value = {
-        'username': '用户名',
-        'avatar': 'https://via.placeholder.com/60',
-        'bio': '这个人很懒，什么都没有写...',
-        'postCount': 0,
-        'followingCount': 0,
-        'followerCount': 0,
-      };
-    } catch (e) {
-      l.e('获取用户信息失败: $e');
-      showError('获取用户信息失败');
+  Widget createCurrent() {
+    switch (selectedIndex) {
+      case 0:
+        return const SummaryPage();
+      case 1:
+        return const ActivityPage();
+      case 2:
+        return const NotificationPage();
+      case 3:
+        return const MessagePage();
+      case 4:
+        return const BadgePage();
+      default:
+        return const SizedBox.shrink();
     }
   }
 
   // 编辑个人信息
-  void editProfile() {
-    // TODO: 跳转到编辑个人信息页面
-  }
+  void editProfile() {}
 
-  // 查看我的收藏
-  void viewFavorites() {
-    // TODO: 跳转到我的收藏页面
-  }
-
-  // 查看浏览历史
-  void viewHistory() {
-    // TODO: 跳转到浏览历史页面
-  }
-
-  // 查看我的评论
-  void viewComments() {
-    // TODO: 跳转到我的评论页面
-  }
-
-  // 查看我的点赞
-  void viewLikes() {
-    // TODO: 跳转到我的点赞页面
-  }
-
-  // 查看消息通知
-  void viewNotifications() {
-    // TODO: 跳转到消息通知页面
-  }
-
-  // 帮助反馈
-  void helpAndFeedback() {
-    // TODO: 跳转到帮助反馈页面
-  }
-
-  // 关于我们
-  void aboutUs() {
-    // TODO: 跳转到关于我们页面
-  }
-
-  // 退出登录
+  // 临时退出登录
   void logout() {
     Get.offAllNamed('/login');
 
@@ -81,5 +75,49 @@ class ProfileController extends BaseController {
     final globalController = Get.find<GlobalController>();
     StorageManager.remove(AppConst.identifier.csrfToken);
     globalController.setIsLogin(false);
+  }
+
+  // 去设置页面
+  void toSettings() {
+    Get.toNamed(Routes.SETTINGS);
+  }
+
+  // 更新在线状态
+  void updatePresence(bool hidePresence) async {
+    try {
+      final response = await _apiService.updatePresence(
+        userName,
+        hidePresence,
+      );
+      Get.find<GlobalController>().userInfo = response;
+      showSuccess(AppConst.updateSuccess);
+    } catch (e) {
+      l.e('更新失败 $e');
+      showError('更新失败');
+    }
+  }
+
+  @override
+  void onClose() {
+    statusController.dispose();
+    super.onClose();
+  }
+
+  // 更新状态
+  void updateStatus() async {
+    try {
+      final response = await _apiService.updateUserStatus(
+        statusController.text.trim(),
+      );
+      if (response != null && response['success'] == 'OK') {
+        showSuccess(AppConst.configSuccess);
+        Get.find<GlobalController>().fetchUserInfo();
+      } else {
+        showError(AppConst.configFailed);
+      }
+    } catch (e) {
+      l.e('更新失败 $e');
+      showError('更新失败');
+    }
   }
 }

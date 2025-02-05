@@ -1,167 +1,199 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../const/app_colors.dart';
 import '../const/app_const.dart';
+import '../const/app_images.dart';
 import '../const/app_sizes.dart';
 import '../const/app_spacing.dart';
+import '../routes/app_pages.dart';
 
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // 屏幕宽度
     final screenWidth = MediaQuery.of(context).size.width;
-    return Drawer(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      width: screenWidth * 0.52,
-      child: Column(
-        children: [
-          // 头部区域
-          _buildHeader(context),
-          // 分割线
-          Divider(color: Theme.of(context).dividerColor),
-          // 主要内容区域
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    final statusBarHeight = MediaQuery.of(context).padding.top;
+
+    return SizedBox(
+      width: screenWidth * 0.58,
+      child: Drawer(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        child: Column(
+          children: [
+            SizedBox(
+              height: 100.w + statusBarHeight,
+              child: Stack(
+                fit: StackFit.expand,
                 children: [
-                  // 外部链接
-                  _buildSection(
-                    context: context,
-                    title: AppConst.drawerMenu.externalLinks,
-                    items: [
-                      const _MenuItem(icon: Icons.visibility, title: 'Status'),
-                      const _MenuItem(icon: Icons.link, title: 'Connect'),
-                      const _MenuItem(icon: Icons.telegram, title: 'Telegram'),
-                    ],
+                  Positioned.fill(
+                    child: Image.asset(
+                      AppImages.getHeaderBackground(context),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  // 类别
-                  _buildSection(
-                    context: context,
-                    title: AppConst.drawerMenu.categories,
-                    items: [
-                      _MenuItem(icon: Icons.code, title: AppConst.drawerMenu.devOptimization, hasNew: false),
-                      _MenuItem(icon: Icons.folder_shared, title: AppConst.drawerMenu.docBuilding, hasNew: false),
-                      _MenuItem(icon: Icons.category, title: AppConst.drawerMenu.notMine, hasNew: false),
-                      _MenuItem(icon: Icons.rocket_launch, title: AppConst.drawerMenu.sailAway),
-                      _MenuItem(icon: Icons.card_giftcard, title: AppConst.drawerMenu.benefits, hasNew: false),
-                      _MenuItem(icon: Icons.feedback, title: AppConst.drawerMenu.operationFeedback, hasNew: false),
-                      _MenuItem(icon: Icons.apps, title: AppConst.drawerMenu.resources, hasNew: false),
-                      _MenuItem(icon: Icons.shopping_cart, title: AppConst.drawerMenu.fleaMarket, hasNew: false),
-                      _MenuItem(icon: Icons.book, title: AppConst.drawerMenu.readingPoetry, hasNew: false),
-                      _MenuItem(icon: Icons.newspaper, title: AppConst.drawerMenu.frontierNews, hasNew: false),
-                      _MenuItem(icon: Icons.eco, title: AppConst.drawerMenu.pickAndChoose, hasNew: false),
-                      _MenuItem(icon: Icons.security, title: AppConst.drawerMenu.deepSea, hasNew: false),
-                    ],
-                    showViewAll: true,
-                  ),
-                  // 标签
-                  _buildSection(
-                    context: context,
-                    title: AppConst.drawerMenu.tags,
-                    items: [
-                      _MenuItem(icon: Icons.card_giftcard, title: AppConst.drawerMenu.lottery, hasNew: false),
-                      _MenuItem(icon: Icons.thumb_up, title: AppConst.drawerMenu.essentialPosts, hasNew: false),
-                      _MenuItem(icon: Icons.psychology, title: AppConst.drawerMenu.ai, hasNew: false),
-                      _MenuItem(icon: Icons.campaign, title: AppConst.drawerMenu.announcements, hasNew: false),
-                      _MenuItem(icon: Icons.question_answer, title: AppConst.drawerMenu.qa, hasNew: false),
-                    ],
-                    showViewAll: true,
-                  ),
-                  // 消息
-                  _buildSection(
-                    context: context,
-                    title: AppConst.drawerMenu.messages,
-                    items: [
-                      _MenuItem(icon: Icons.inbox, title: AppConst.drawerMenu.inbox),
-                    ],
-                  ),
-                  // 频道
-                  _buildSection(
-                    context: context,
-                    title: AppConst.drawerMenu.channels,
-                    items: [
-                      _MenuItem(icon: Icons.chat, title: AppConst.drawerMenu.regularChannel, hasNew: false),
-                    ],
-                    showViewAll: true,
+                  Positioned(
+                    left: Spacing.md,
+                    bottom: Spacing.xxl,
+                    right: Spacing.md,
+                    child: Text.rich(
+                      TextSpan(
+                          text: ' \n${AppConst.siteName}',
+                          style: TextStyle(
+                              fontSize: AppSizes.fontLarge,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.white)),
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + Spacing.md,
-        left: Spacing.md,
-        right: Spacing.md,
-        bottom: Spacing.md,
-      ),
-      child: Row(
-        children: [
-          // 话题
-          _buildHeaderItem(
-            context: context,
-            icon: Icons.layers,
-            title: AppConst.drawerMenu.topics,
-            hasNew: false,
-          ),
-          6.hGap,
-          // 我的草稿
-          _buildHeaderItem(
-            context: context,
-            icon: Icons.edit_note,
-            title: AppConst.drawerMenu.myDrafts,
-            hasNew: false,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeaderItem({
-    required BuildContext context,
-    required IconData icon,
-    required String title,
-    bool hasNew = false,
-  }) {
-    return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(Spacing.sm),
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
-          borderRadius: BorderRadius.circular(Spacing.sc4),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: AppSizes.iconSmall),
-           14.hGap,
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: AppSizes.fontNormal,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            if (hasNew) ...[
-             8.hGap,
-              Container(
-                width: 6.w,
-                height: 6.w,
-                decoration: const BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
+            // 分割线
+            Divider(color: Theme.of(context).dividerColor),
+            // 主要内容区域 - 使用 SafeArea 只作用于滚动内容
+            Expanded(
+              child: SafeArea(
+                top: false, // 不处理顶部，因为我们已经手动处理了
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // 外部链接
+                      _buildSection(
+                        context: context,
+                        title: AppConst.drawerMenu.externalLinks,
+                        items: [
+                          _MenuItem(
+                              icon: CupertinoIcons.eye,
+                              title: AppConst.drawerMenu.status,
+                              url: AppConst.drawerMenu.statusUrl),
+                          _MenuItem(
+                              icon: CupertinoIcons.link,
+                              title: AppConst.drawerMenu.connect,
+                              url: AppConst.drawerMenu.connectUrl),
+                          _MenuItem(
+                              icon: CupertinoIcons.gift,
+                              title: AppConst.drawerMenu.lottery,
+                              url: AppConst.drawerMenu.lotteryUrl),
+                          _MenuItem(
+                              icon: CupertinoIcons.paperplane,
+                              title: AppConst.drawerMenu.telegramChannel,
+                              url: AppConst.drawerMenu.channelUrl),
+                          _MenuItem(
+                              icon: CupertinoIcons.paperplane,
+                              title: AppConst.drawerMenu.telegram,
+                              url: AppConst.drawerMenu.jaTGUrl),
+                        ],
+                      ),
+                      // 类别
+                      _buildSection(
+                        context: context,
+                        title: AppConst.drawerMenu.categories,
+                        items: [
+                          _MenuItem(
+                              icon: CupertinoIcons
+                                  .chevron_left_slash_chevron_right,
+                              title: AppConst.drawerMenu.devOptimization,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.folder,
+                              title: AppConst.drawerMenu.docBuilding,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.square_grid_2x2,
+                              title: AppConst.drawerMenu.notMine,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.rocket,
+                              title: AppConst.drawerMenu.sailAway),
+                          _MenuItem(
+                              icon: CupertinoIcons.gift,
+                              title: AppConst.drawerMenu.benefits,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.chat_bubble_text,
+                              title: AppConst.drawerMenu.operationFeedback,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.square_grid_3x2,
+                              title: AppConst.drawerMenu.resources,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.cart,
+                              title: AppConst.drawerMenu.fleaMarket,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.book,
+                              title: AppConst.drawerMenu.readingPoetry,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.news,
+                              title: AppConst.drawerMenu.frontierNews,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.leaf_arrow_circlepath,
+                              title: AppConst.drawerMenu.pickAndChoose,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.shield,
+                              title: AppConst.drawerMenu.deepSea,
+                              hasNew: false),
+                        ],
+                        showViewAll: true,
+                      ),
+                      // 标签
+                      _buildSection(
+                        context: context,
+                        title: AppConst.drawerMenu.tags,
+                        items: [
+                          _MenuItem(
+                              icon: CupertinoIcons.hand_thumbsup,
+                              title: AppConst.drawerMenu.essentialPosts,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.waveform_path,
+                              title: AppConst.drawerMenu.ai,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.speaker_2,
+                              title: AppConst.drawerMenu.announcements,
+                              hasNew: false),
+                          _MenuItem(
+                              icon: CupertinoIcons.question_circle,
+                              title: AppConst.drawerMenu.qa,
+                              hasNew: false),
+                        ],
+                        showViewAll: true,
+                      ),
+                      // // 消息
+                      // _buildSection(
+                      //   context: context,
+                      //   title: AppConst.drawerMenu.messages,
+                      //   items: [
+                      //     _MenuItem(
+                      //         icon: CupertinoIcons.tray,
+                      //         title: AppConst.drawerMenu.inbox),
+                      //   ],
+                      // ),
+                      // // 频道
+                      // _buildSection(
+                      //   context: context,
+                      //   title: AppConst.drawerMenu.channels,
+                      //   items: [
+                      //     _MenuItem(
+                      //         icon: CupertinoIcons.chat_bubble_2,
+                      //         title: AppConst.drawerMenu.regularChannel,
+                      //         hasNew: false),
+                      //   ],
+                      //   showViewAll: true,
+                      // ),
+                    ],
+                  ),
                 ),
               ),
-            ],
+            ),
           ],
         ),
       ),
@@ -192,11 +224,14 @@ class DrawerMenu extends StatelessWidget {
               ),
               if (showViewAll) ...[
                 const Spacer(),
-                Icon(
-                  Icons.edit,
-                  size: AppSizes.iconSmall,
-                  color: AppColors.primary,
-                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(
+                    CupertinoIcons.pencil_circle_fill,
+                    size: AppSizes.iconSmall,
+                    color: AppColors.primary,
+                  ),
+                )
               ],
             ],
           ),
@@ -213,7 +248,10 @@ class DrawerMenu extends StatelessWidget {
   Widget _buildMenuItem(BuildContext context, _MenuItem item) {
     return InkWell(
       onTap: () {
-        Get.back(); // 关闭抽屉
+        if (item.url != null) {
+          Get.back(); // 关闭抽屉
+          Get.toNamed(Routes.WEBVIEW, arguments: item.url);
+        }
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -236,7 +274,7 @@ class DrawerMenu extends StatelessWidget {
               ),
             ),
             if (item.hasNew) ...[
-             8.hGap,
+              8.hGap,
               Container(
                 width: 6.w,
                 height: 6.w,
@@ -257,10 +295,11 @@ class _MenuItem {
   final IconData icon;
   final String title;
   final bool hasNew;
-
+  final String? url;
   const _MenuItem({
     required this.icon,
     required this.title,
     this.hasNew = false,
+    this.url,
   });
-} 
+}

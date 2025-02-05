@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:linux_do/const/app_colors.dart';
+import 'package:linux_do/const/app_const.dart';
+import 'package:linux_do/utils/storage_manager.dart';
 
 import '../../const/app_icons.dart';
 import '../../controller/base_controller.dart';
@@ -44,6 +46,16 @@ class StartupController extends BaseController {
 
   final pageController = PageController();
 
+  @override
+  void onInit() {
+    bool isFirst = StorageManager.getBool(AppConst.identifier.isFirst) ?? false;
+    if (isFirst) {
+      Get.offAllNamed(Routes.LOGIN);
+      return;
+    } 
+    super.onInit();
+  }
+
 
   void onPageChanged(int index) {
     _currentPage.value = index;
@@ -56,6 +68,7 @@ class StartupController extends BaseController {
         curve: Curves.easeInOut,
       );
     } else {
+      StorageManager.setData(AppConst.identifier.isFirst, true);
       Get.offNamed(Routes.LOGIN);
     }
   }

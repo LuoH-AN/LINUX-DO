@@ -1,35 +1,28 @@
-import 'package:get/get.dart';
+import 'dart:math';
 
-import '../const/app_const.dart';
+import 'package:crypto/crypto.dart';
+import 'package:get/get.dart';
+import 'package:linux_do/const/app_const.dart';
+import '../models/user.dart';
+import '../net/api_service.dart';
+import '../net/http_client.dart';
+import '../utils/log.dart';
+import '../utils/mixins/concatenated.dart';
 import '../utils/storage_manager.dart';
 import 'base_controller.dart';
 
 /// 全局控制器
 
-class GlobalController extends BaseController {
-  /// final RxString _token = ''.obs;
+class GlobalController extends BaseController with Concatenated {
+  final ApiService _apiService = Get.find();
 
-  /// 并不是token，而是cookie
-  /// 获取token
-  // String get token => _token.value;
+  // 用户信息
+  final _userInfo = Rxn<UserResponse>();
 
-  // /// 设置token
-  // void setToken(String value) {
-  //   _token.value = value;
-  // }
+  // 生成唯一的client_id
+  static String clientId = '';
 
-  /// csrfToken
-  final RxString _csrfToken = ''.obs;
-
-  /// 获取CSRF Token
-  String get csrfToken => _csrfToken.value;
-
-  /// 设置CSRF Token
-  void setCsrfToken(String value) {
-    _csrfToken.value = value;
-  }
-
-  final RxBool _isLogin = false.obs;
+  final _isLogin = false.obs;
 
   /// 获取是否登录
   bool get isLogin => _isLogin.value;
@@ -39,14 +32,76 @@ class GlobalController extends BaseController {
     _isLogin.value = value;
   }
 
+  set userInfo(UserResponse? value) {  
+    _userInfo.value = value;
+  }
+
+  UserResponse? get userInfo => _userInfo.value;
+
   @override
   void onInit() {
+
+    fetchUserInfo();
+    
     super.onInit();
 
-    // 获取CSRF Token
-    setCsrfToken(StorageManager.getString(AppConst.identifier.csrfToken) ?? '');
+    _checkClientId();
+  }
 
-    // 获取是否登录
-    setIsLogin(csrfToken.isNotEmpty);
+  void _checkClientId() {
+    String? clientSaveId = StorageManager.getString(AppConst.identifier.clientId);
+    if (clientSaveId != null && clientSaveId.isNotEmpty) {
+      clientId = clientSaveId;
+    } else {
+      clientId = generateRandomMD5LikeString();
+      StorageManager.setData(AppConst.identifier.clientId, clientId);
+    }
+  }
+
+  String generateRandomMD5LikeString() {
+  final random = Random.secure();
+  final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+  return md5.convert(bytes).toString();
+}
+
+  Future<void> checkLoginStatus() async {
+    try {
+      // 首先检查是否有有效的 cookies
+      final hasValidCookies = await HttpClient.getInstance().hasValidCookies();
+      if (!hasValidCookies) {
+        _isLogin.value = false;
+        return;
+      }
+
+      _isLogin.value = true;
+
+      // // 如果有有效的 cookies，再尝试请求接口验证
+      // try {
+      //   final response = await httpClient.get('unread.json');
+      //   _isLogin.value = response.isSuccess;
+      // } catch (e) {
+      //   l.e('验证登录状态失败: $e');
+      //   _isLogin.value = false;
+      // }
+    } catch (e) {
+      l.e('检查登录状态失败: $e');
+      _isLogin.value = false;
+    }
+  }
+
+
+    // 获取用户信息
+  Future<void> fetchUserInfo() async {
+    if (isUserEmpty()) return;
+
+    try {
+      final response = await _apiService.getCurrentUser(userName);
+      _userInfo.value = response;
+      /// 打印用户所有信息
+      l.d('用户信息: ${response.user?.toJson()}');
+    } catch (e, stack) {
+      l.e('获取用户信息失败: $e\n$stack');
+      showError('获取用户信息失败');
+    }
   }
 }

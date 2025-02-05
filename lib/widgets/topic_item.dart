@@ -129,22 +129,17 @@ class TopicItem extends StatelessWidget {
                                   Container(
                                     margin: EdgeInsets.only(right: 8.w),
                                     padding: EdgeInsets.symmetric(
-                                        horizontal: 6.w, vertical: 2.w),
+                                        horizontal: 4.w, vertical: 2.w),
                                     decoration: BoxDecoration(
                                       color:
-                                          AppColors.primary.withValues(alpha: .15),
-                                      border: Border.all(
-                                        color:
-                                            AppColors.primary.withValues(alpha: .2),
-                                        width: 0.5,
-                                      ),
+                                          AppColors.primary,
                                       borderRadius: BorderRadius.circular(4.w),
                                     ),
                                     child: Text(
                                       '置顶',
                                       style: TextStyle(
                                         fontSize: 10.w,
-                                        color: AppColors.primary,
+                                        color: AppColors.white,
                                       ),
                                     ),
                                   ),

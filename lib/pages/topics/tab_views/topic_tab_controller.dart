@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
+import 'package:linux_do/const/app_const.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import '../../../controller/base_controller.dart';
 import '../../../models/topic_model.dart';
 import '../../../net/api_service.dart';
 import '../../../routes/app_pages.dart';
 import '../../../utils/log.dart';
+import '../../../utils/mixins/toast_mixin.dart';
 import '../../../utils/user_cache.dart';
 
 class TopicTabController extends BaseController
@@ -93,7 +95,7 @@ class TopicTabController extends BaseController
 
     try {
       isLoadingMore.value = true;
-      clearError(); // 清除之前的错误
+      clearError(); 
       final nextPage = currentPage.value + 1;
       final response = await apiService.getTopics('$path?page=$nextPage');
 
@@ -120,7 +122,6 @@ class TopicTabController extends BaseController
 
   // 跳转到帖子详情
   void toTopicDetail(int id) {
-    l.d('当前的id: $id');
     Get.toNamed(Routes.TOPIC_DETAIL, arguments: id);
   }
 
@@ -136,5 +137,40 @@ class TopicTabController extends BaseController
     final latestPosterId = topic.getOriginalPosterId();
     if (latestPosterId == null) return null;
     return _userCache.getUserName(latestPosterId);
+  }
+
+  Future<void> doNotDisturb(int id) async {
+    l.d('设置免打扰 id : $id');
+    try {
+      final response = await apiService.setTopicMute(id.toString(), 0);
+      l.d('设置免打扰响应: $response');
+      
+      // 检查响应是否成功
+      final isSuccess = response is Map 
+          ? response['success'] == 'OK'
+          : response.toString().contains('OK');
+          
+      if (isSuccess) {
+        showSnackbar(
+          title: AppConst.commonTip,
+          message: AppConst.posts.disturbSuccess,
+          type: SnackbarType.success
+        );
+      } else {
+        l.e('设置免打扰失败: 响应数据异常 $response');
+        showSnackbar(
+          title: AppConst.commonTip,
+          message: AppConst.posts.error,
+          type: SnackbarType.error
+        );
+      }
+    } catch (e, stackTrace) {
+      l.e('设置免打扰失败: $e\n$stackTrace');
+      showSnackbar(
+        title: AppConst.commonTip,
+        message: AppConst.posts.error,
+        type: SnackbarType.error
+      );
+    }
   }
 }

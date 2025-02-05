@@ -1,9 +1,14 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:linux_do/const/app_spacing.dart';
+import 'package:linux_do/widgets/dis_loading.dart';
 import '../../const/app_const.dart';
 import '../../const/app_colors.dart';
 import '../../const/app_images.dart';
+import '../../routes/app_pages.dart';
+import '../../utils/tag.dart';
 import '../../widgets/drawer_menu.dart';
 import 'topics_controller.dart';
 
@@ -20,13 +25,11 @@ class _TopicsPageState extends State<TopicsPage>
 
   @override
   Widget build(BuildContext context) {
-    final logoWidth = 70.w;
     final appBarHeight = 44.w;
     final margin = 18.w;
     final menuWidth = 44.w; // 菜单按钮宽度
     final horizontalPadding = 16.w; // 水平内边距
     return Scaffold(
-      drawer: const DrawerMenu(),
       body: NotificationListener<ScrollNotification>(
         onNotification: controller.handleScrollNotification,
         child: NestedScrollView(
@@ -52,101 +55,13 @@ class _TopicsPageState extends State<TopicsPage>
                         return Stack(
                           children: [
                             // 搜索框（固定在AppBar下方）
-                            Positioned(
-                              top: kToolbarHeight,
-                              left: 0,
-                              right: 0,
-                              height: appBarHeight,
-                              child: Row(
-                                children: [
-                                  // 左侧菜单按钮
-                                  AnimatedOpacity(
-                                    opacity: collapsedProgress,
-                                    duration: const Duration(milliseconds: 200),
-                                    child: SizedBox(
-                                      width: menuWidth * collapsedProgress,
-                                      child: IconButton(
-                                        padding: EdgeInsets.zero,
-                                        icon: Icon(Icons.menu_rounded,
-                                            color: Theme.of(context)
-                                                .iconTheme
-                                                .color),
-                                        onPressed: () {
-                                          Scaffold.of(context).openDrawer();
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  // 搜索框
-                                  Expanded(
-                                    child: Container(
-                                      height: 32.w,
-                                      margin: EdgeInsets.only(
-                                        top: 4.w,
-                                        bottom: 4.w,
-                                        left: collapsedProgress > 0
-                                            ? 0
-                                            : margin, // 折叠时左边距为0
-                                        right: collapsedProgress > 0
-                                            ? horizontalPadding
-                                            : margin,
-                                      ),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 12.w),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context)
-                                            .cardColor
-                                            .withValues(alpha: .9),
-                                        borderRadius:
-                                            BorderRadius.circular(18.w),
-                                        border: Border.all(
-                                          color: Theme.of(context)
-                                                  .inputDecorationTheme
-                                                  .fillColor ??
-                                              Colors.transparent,
-                                          width: 0.5,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Icon(Icons.search,
-                                              color: Theme.of(context)
-                                                  .inputDecorationTheme
-                                                  .fillColor,
-                                              size: 18.w),
-                                          SizedBox(width: 8.w),
-                                          Text(
-                                            '搜索话题...',
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .inputDecorationTheme
-                                                  .fillColor,
-                                              fontSize: 13.w,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  // 右侧logo
-                                  AnimatedOpacity(
-                                    opacity: collapsedProgress,
-                                    duration: const Duration(milliseconds: 200),
-                                    child: SizedBox(
-                                      width: logoWidth * collapsedProgress,
-                                      child: Container(
-                                        padding: EdgeInsets.only(
-                                            right: horizontalPadding),
-                                        child: Image.asset(
-                                          AppImages.getLogo(context),
-                                          width: logoWidth,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
+                            _buildTopWidget(
+                                appBarHeight,
+                                collapsedProgress,
+                                menuWidth,
+                                context,
+                                margin,
+                                horizontalPadding),
                             // 背景图片（只在展开状态显示）
                             if (collapsedProgress < 1)
                               Positioned(
@@ -239,6 +154,89 @@ class _TopicsPageState extends State<TopicsPage>
       ),
     );
   }
+
+  Positioned _buildTopWidget(
+      double appBarHeight,
+      double collapsedProgress,
+      double menuWidth,
+      BuildContext context,
+      double margin,
+      double horizontalPadding) {
+        final logoWidth = 100.w;
+    return Positioned(
+      top: kToolbarHeight,
+      left: 0,
+      right: 0,
+      height: appBarHeight,
+      child: Row(
+        children: [
+         
+          // 搜索框
+          Expanded(
+            child: GestureDetector(
+              onTap: () {
+                showSearch(
+                  context: context,
+                  delegate: TopicSearchDelegate(controller),
+                );
+              },
+              child: Container(
+                height: 32.w,
+                margin: EdgeInsets.only(
+                  top: 4.w,
+                  bottom: 4.w,
+                  left: margin,
+                  right: margin,
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 12.w),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor.withValues(alpha: .9),
+                  borderRadius: BorderRadius.circular(18.w),
+                  border: Border.all(
+                    color: Theme.of(context).inputDecorationTheme.fillColor ??
+                        Colors.transparent,
+                    width: 0.5,
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.search,
+                      size: 18.w,
+                      color: Theme.of(context).hintColor,
+                    ),
+                    SizedBox(width: 8.w),
+                    Text(
+                      AppConst.posts.searchTopic,
+                      style: TextStyle(
+                        fontSize: 14.w,
+                        color: Theme.of(context).hintColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          // 右侧logo
+          AnimatedOpacity(
+            opacity: collapsedProgress,
+            duration: const Duration(milliseconds: 200),
+            child: SizedBox(
+              width: logoWidth * collapsedProgress,
+              child: Container(
+                padding: EdgeInsets.only(right: horizontalPadding),
+                child: Image.asset(
+                  AppImages.getLogo(context),
+                  width: logoWidth,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }
 
 // 添加 SliverPersistentHeaderDelegate 实现
@@ -270,5 +268,204 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
     return maxHeight != oldDelegate.maxHeight ||
         minHeight != oldDelegate.minHeight ||
         child != oldDelegate.child;
+  }
+}
+
+class TopicSearchDelegate extends SearchDelegate<String> {
+  final TopicsController controller;
+
+  TopicSearchDelegate(this.controller)
+      : super(
+          searchFieldLabel: AppConst.posts.searchTopic,
+          searchFieldStyle: TextStyle(
+            fontSize: 14.w,
+            color: Get.theme.textTheme.bodyMedium?.color,
+          ),
+        );
+
+  @override
+  ThemeData appBarTheme(BuildContext context) {
+    return Theme.of(context).copyWith(
+      inputDecorationTheme: InputDecorationTheme(
+        filled: false,
+        border: InputBorder.none,
+        isDense: true,
+        contentPadding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.w),
+        hintStyle: TextStyle(
+          fontSize: 14.w,
+          color: Theme.of(context).hintColor,
+        ),
+      ),
+    );
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      Obx(() {
+        if (controller.isSearching.value) {
+          return Center(
+            child: Padding(
+              padding: EdgeInsets.only(right: 12.w),
+              child: SizedBox(
+                height: 16.w,
+                child: DisRefreshLoading(fontSize: 8.w),
+              ),
+            ),
+          );
+        }
+        return IconButton(
+          icon: Icon(
+            CupertinoIcons.clear,
+            size: 18.w,
+            color: Theme.of(context).hintColor,
+          ),
+          onPressed: () {
+            if (query.isEmpty) {
+              close(context, '');
+            } else {
+              query = '';
+              controller.clearSearch();
+            }
+          },
+        );
+      }),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(
+        CupertinoIcons.arrow_left_circle_fill,
+        size: 24.w,
+        color: Theme.of(context).hintColor,
+      ),
+      onPressed: () {
+        controller.clearSearch();
+        close(context, '');
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) => buildSuggestions(context);
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    return Obx(() {
+      if (controller.topics.isEmpty) {
+        return Center(
+          child: Text(
+            controller.searchError.value.isNotEmpty
+                ? controller.searchError.value
+                : '没有找到相关内容',
+            style: TextStyle(
+              color: Theme.of(context).hintColor,
+              fontSize: 12.w,
+            ),
+          ),
+        );
+      }
+
+      return ListView.builder(
+        padding: EdgeInsets.symmetric(vertical: 8.w),
+        itemCount: controller.topics.length,
+        itemBuilder: (context, index) {
+          final topic = controller.topics[index];
+          return Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                controller.clearSearch();
+                close(context, topic.id.toString());
+                Get.toNamed(Routes.TOPIC_DETAIL, arguments: topic.id);
+              },
+              borderRadius: BorderRadius.circular(4.w),
+              splashColor: Theme.of(context).primaryColor.withValues(alpha: .1),
+              highlightColor: Theme.of(context).primaryColor.withValues(alpha: .05),
+              child: Container(
+                margin: EdgeInsets.symmetric(vertical: 3.w, horizontal: 12.w),
+                padding: EdgeInsets.symmetric(
+                  horizontal: 12.w,
+                  vertical: 8.w,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).cardColor,
+                  borderRadius: BorderRadius.circular(4.w),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (topic.tags != null && topic.tags!.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsets.only(top: 4.w),
+                        child: SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: topic.tags!.map((tag) {
+                              final color = Tag.getTagColors(tag);
+                              return Container(
+                                margin: EdgeInsets.only(right: 8.w),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: 8.w, vertical: 2.w),
+                                decoration: BoxDecoration(
+                                  color: color.backgroundColor,
+                                  border: Border.all(
+                                    color: color.backgroundColor,
+                                    width: 0.5,
+                                  ),
+                                  borderRadius: BorderRadius.circular(4.w),
+                                ),
+                                child: Text(
+                                  tag,
+                                  style: TextStyle(
+                                    fontSize: 9.w,
+                                    color: color.textColor,
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    4.vGap,
+                    Text(
+                      topic.title ?? '',
+                      style: TextStyle(
+                        fontSize: 14.w,
+                        color: Theme.of(context).textTheme.bodyMedium?.color,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      );
+    });
+  }
+
+  @override
+  void showResults(BuildContext context) {
+    super.showResults(context);
+    if (query.isNotEmpty) {
+      controller.searchTopics(query);
+    } else {
+      controller.clearSearch();
+    }
+  }
+
+  @override
+  void showSuggestions(BuildContext context) {
+    super.showSuggestions(context);
+    if (query.isNotEmpty) {
+      controller.searchTopics(query);
+    } else {
+      controller.clearSearch();
+    }
   }
 }

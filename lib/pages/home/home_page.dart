@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:lazy_load_indexed_stack/lazy_load_indexed_stack.dart';
+import '../chat/chat_page.dart';
 import '../topics/topics_page.dart';
-import '../topics/my_topics_page.dart';
-import '../custom/custom_page.dart';
+import '../category/category_topics_page.dart';
 import '../profile/profile_page.dart';
 import 'home_controller.dart';
-import '../../const/app_colors.dart';
 
 // 自定义TabStyle
 class CustomTabStyle extends StyleHook {
@@ -38,14 +38,15 @@ class HomePage extends GetView<HomeController> {
 
     return Scaffold(
       body: Obx(
-        () => IndexedStack(
+        () => LazyLoadIndexedStack(
           index: controller.currentTab.value,
           children: const [
             TopicsPage(),
-            MyTopicsPage(),
-            SizedBox(), // 占位，实际不显示
-            CustomPage(),
+            CategoryTopicsPage(),
+            SizedBox(), // 占位
+            ChatPage(),
             ProfilePage(),
+
           ],
         ),
       ),
@@ -71,17 +72,16 @@ class HomePage extends GetView<HomeController> {
                     .bottomNavigationBarTheme
                     .selectedItemColor,
                 height: 50.h,
-                curveSize: 80.w,
+                curveSize: 60.w,
                 top: -20.h,
                 elevation: 0.5,
-                cornerRadius: 8.w,
+                cornerRadius: 20.w,
                 badgeMargin: EdgeInsets.only(left: 20.w, bottom: 18.h),
                 items: [
-                  _buildTabItem(Icons.article_outlined, '帖子', context),
-                  _buildTabItem(Icons.bookmark_border, '我的帖子', context),
+                  _buildTabItem(CupertinoIcons.square_list_fill, '帖子', context),
+                  _buildTabItem(CupertinoIcons.square_split_2x2_fill, '分类', context),
                   TabItem(
                     icon: Container(
-                      width: 40.w,
                       decoration: BoxDecoration(
                         color: Theme.of(context).primaryColor,
                         shape: BoxShape.circle,
@@ -95,7 +95,7 @@ class HomePage extends GetView<HomeController> {
                       ),
                       child: Icon(
                         CupertinoIcons.add,
-                        size: 24.w,
+                        size: 26.w,
                         color: Colors.white,
                       ),
                     ),
@@ -103,8 +103,8 @@ class HomePage extends GetView<HomeController> {
                     fontFamily: '',
                     isIconBlend: false,
                   ),
-                  _buildTabItem(Icons.dashboard_customize_outlined, '自定义', context),
-                  _buildTabItem(Icons.person_outline, '我的', context),
+                  _buildTabItem(CupertinoIcons.app_badge_fill, '私信', context),
+                  _buildTabItem(CupertinoIcons.person_crop_square_fill, '我的', context),
                 ],
                 initialActiveIndex: controller.currentTab.value,
                 onTap: controller.switchTab,

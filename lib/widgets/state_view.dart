@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:linux_do/const/app_const.dart';
+import 'package:linux_do/const/app_spacing.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../const/app_images.dart';
-import 'li_do_button.dart';
+import 'dis_button.dart';
 
 enum ViewState {
   loading,
@@ -151,30 +152,7 @@ class StateView extends GetView {
   }
 
   Widget _buildError(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(
-            AppImages.getNetError(context),
-            width: 180.w,
-          ),
-          SizedBox(height: 16.w),
-          Text(
-            errorMessage ?? AppConst.stateHint.error,
-            style: TextStyle(
-              fontSize: 14.w,
-              color: Theme.of(context).hintColor,
-            ),
-          ),
-          if (onRetry != null) ...[
-            SizedBox(height: 16.w),
-            LiDoButton(
-                text: '重试', size: LiDoButtonSize.small, onPressed: onRetry),
-          ],
-        ],
-      ),
-    );
+    return StateViewError(errorMessage: errorMessage, onRetry: onRetry,);
   }
 
   Widget _buildEmpty(BuildContext context) {
@@ -182,22 +160,23 @@ class StateView extends GetView {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          30.vGap,
           Image.asset(
             AppImages.getEmpty(context),
             width: 180.w,
           ),
-          SizedBox(height: 16.w),
+          16.vGap,
           Text(
-            errorMessage ?? AppConst.stateHint.error,
+            AppConst.stateHint.empty,
             style: TextStyle(
-              fontSize: 14.w,
+              fontSize: 11.w,
               color: Theme.of(context).hintColor,
             ),
           ),
           if (onRetry != null) ...[
-            SizedBox(height: 16.w),
-            LiDoButton(
-                text: '重试', size: LiDoButtonSize.small, onPressed: onRetry),
+            16.vGap,
+            DisButton(
+                text: '重试', size: ButtonSize.small, onPressed: onRetry),
           ],
         ],
       ),
@@ -230,6 +209,41 @@ class ShimmerDetails extends GetView {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+
+class StateViewError extends StatelessWidget {
+  final String? errorMessage;
+  final VoidCallback? onRetry;
+  const StateViewError({super.key,this.errorMessage, this.onRetry});
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          30.vGap,
+          Image.asset(
+            AppImages.getEmpty(context),
+            width: 180.w,
+          ),
+          16.vGap,
+          Text(
+            errorMessage ?? AppConst.stateHint.error,
+            style: TextStyle(
+              fontSize: 14.w,
+              color: Theme.of(context).hintColor,
+            ),
+          ),
+          if (onRetry != null) ...[
+            16.vGap,
+            DisButton(
+                text: '重试', size: ButtonSize.small, onPressed: onRetry),
+          ],
+        ],
       ),
     );
   }

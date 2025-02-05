@@ -7,8 +7,8 @@ class ApiResponse<T> {
 
   ApiResponse.fromJson(
       Map<String, dynamic> json, T Function(dynamic)? fromJson) {
-    code = json['code'];
-    message = json['message'];
+    code = json['code'] ?? 200; // 默认成功状态码为 200
+    message = json['message'] ?? 'success';
     if (json['data'] != null && fromJson != null) {
       data = fromJson(json['data']);
     } else {

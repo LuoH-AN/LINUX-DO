@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../models/category.dart';
+
 class Tag {
   static final Map<String, TagColor> _cache = {};
 
@@ -72,4 +74,38 @@ class TagColor {
     required this.textColor,
     required this.backgroundColor,
   });
+}
+
+
+class CategoryManager {
+  static final CategoryManager _instance = CategoryManager._internal();
+  factory CategoryManager() => _instance;
+  CategoryManager._internal();
+
+  final Map<int, Category> _categories = <int, Category>{};
+
+  Future<void> initialize() async {
+    if (_categories.isNotEmpty) return;
+    try {
+      final String jsonString = await rootBundle.loadString('assets/json/category.json');
+      final List<dynamic> jsonList = json.decode(jsonString);
+      
+      for (var item in jsonList) {
+        final category = Category.fromJson(item);
+        _categories[category.id] = category;
+      }
+    } catch (e) {
+      print('Error loading categories: $e');
+    }
+  }
+
+  String getCategoryName(int? categoryId) {
+    if (categoryId == null) return '';
+    return _categories[categoryId]?.name ?? '';
+  }
+
+  Category? getCategory(int? categoryId) {
+    if (categoryId == null) return null;
+    return _categories[categoryId];
+  }
 }

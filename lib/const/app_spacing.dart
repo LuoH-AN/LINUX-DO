@@ -52,11 +52,12 @@ class Spacing {
   static double get sc30 => 30.w;
   static double get sc31 => 31.w;
   static double get sc32 => 32.w;
-
+  static double get sc40 => 48.w;
   // 常用别名
   static double get xs => sc4;    // 超小间距
   static double get sm => sc8;    // 小间距
   static double get md => sc16;   // 中间距
   static double get lg => sc24;   // 大间距
   static double get xl => sc32;   // 超大间距
+  static double get xxl => sc40;   // 超大间距
 }

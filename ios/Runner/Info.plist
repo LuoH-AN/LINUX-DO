@@ -52,5 +52,13 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>需要访问相册以选择上传的图片</string>
+	<key>NSCameraUsageDescription</key>
+	<string>需要访问相机以拍摄上传的图片</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>需要访问麦克风以录制视频</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>需要访问相册以保存图片</string>
 </dict>
 </plist>

@@ -4,6 +4,7 @@ class AppImages {
   // 基础路径
   static const String _lightPath = 'assets/images/light';
   static const String _darkPath = 'assets/images/dark';
+  static const String imagesPath = 'assets/images/';
   
   // 图片名称
   static const String _logoName = 'logo.webp';
@@ -11,6 +12,15 @@ class AppImages {
   static const String _inputAccount = 'input-account.png';
   static const String _inputPassword = 'input-password.png';
   static const String _headerBackground = 'header-background.png';
+  static const String profileHeaderBg = 'assets/images/profile-header-bg.png';
+  static const String logoCircle = 'assets/images/logo-circle.png';
+  static const String _chatListBg = 'chat-list-background.png';
+  static const String _chatBg = 'chat-background.png';
+  static const String searchIcon = 'assets/images/search-icon.png';
+  static const String leaderboardTop = 'assets/images/leaderboard-top.png';
+  static const String crown = 'assets/images/crown.png';
+  static const String lOther = 'assets/images/l-other.png';
+  static const String lMe = 'assets/images/l-me.png';
 
 
   // 状态Icon
@@ -60,5 +70,15 @@ class AppImages {
   // 获取头部背景
   static String getHeaderBackground(BuildContext context) {
     return getImagePath(context, _headerBackground);
+  }
+
+  // 获取聊天列表背景
+  static String getChatListBg(BuildContext context) {
+    return getImagePath(context, _chatListBg);
+  }
+
+  // 获取聊天背景
+  static String getChatBg(BuildContext context) {
+    return getImagePath(context, _chatBg);
   }
 }

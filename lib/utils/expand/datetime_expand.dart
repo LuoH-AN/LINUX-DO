@@ -71,4 +71,22 @@ extension DateTimeExpand on DateTime {
       return '${(difference.inDays / 365).floor()}年前';
     }
   }
-} 
+
+  // 超过1天就显示具体时间
+  String get friendlyDateTime2 {
+    final now = DateTime.now();
+    final difference = now.difference(this);
+
+    if (difference.inSeconds < 60) {
+      return '刚刚';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes}分钟前';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours}小时前';
+    }else if (difference.inDays > 1) {
+      return format('MM-dd');
+    } else {
+      return format('HH:mm');
+    }
+  }
+}

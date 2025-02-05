@@ -11,7 +11,7 @@ class AppColors {
   static const Color secondary = Color(0xFFD7EFFD);
 
   /// 次要颜色 2
-  static const Color secondary2 = Color(0xFF4EABF8);
+  static const Color secondary2 = Color.fromARGB(255, 101, 180, 245);
 
   /// 背景色
   static const Color background = Color(0xFFF5F5F5);
@@ -61,6 +61,16 @@ class AppColors {
 
   /// 透明色
   static const Color transparent = Colors.transparent;
+
+  /// l-1
+  static const Color l1 = Color(0xFFEDB441);
+
+  /// l-2
+  static const Color l2 = Color(0xFFE14434);
+
+  /// l-3
+  static const Color l3 = Color(0xFFD76F3C);
+
 
   /// 亮色主题颜色
   static final light = _Colors(

@@ -149,7 +149,7 @@ class AppTheme {
   static ThemeData get darkTheme {
     return ThemeData(
       brightness: Brightness.dark,
-      primaryColor: AppColors.primary,
+      primaryColor: AppColors.primaryLight,
       scaffoldBackgroundColor: AppColors.dark.background,
       cardColor: AppColors.dark.card,
       dividerColor: AppColors.dark.divider,

@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:linux_do/const/app_const.dart';
 
 import 'app.dart';
 import 'routes/app_pages.dart';
@@ -19,7 +21,7 @@ void main() async {
   ]);
 
   // 初始化App
-  await App.initial();
+  await App.instance.initial();
 
   runApp(const MyApp());
 }
@@ -36,9 +38,13 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
       builder: (context, child) {
         return GetMaterialApp(
-          title: 'Linux DO',
+          title: AppConst.siteName,
           debugShowCheckedModeBanner: false,
 
+          /// 国际化配置
+          localizationsDelegates: GlobalMaterialLocalizations.delegates,
+          supportedLocales: AppConst.supportedLanguages.map((e) => Locale(e)).toList(),
+          
           // 主题配置
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,

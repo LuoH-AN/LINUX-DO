@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:linux_do/const/app_const.dart';
 
 import '../utils/mixins/toast_mixin.dart';
+import '../widgets/state_view.dart';
 
 class BaseController extends GetxController with ToastMixin {
   // 页面加载状态
@@ -12,6 +13,9 @@ class BaseController extends GetxController with ToastMixin {
 
   // 是否显示错误
   final RxBool hasError = false.obs;
+
+  // 是否显示空页面
+  final RxBool isEmpty = false.obs;
 
   // 设置加载状态
   void setLoading(bool value) {
@@ -42,6 +46,19 @@ class BaseController extends GetxController with ToastMixin {
     } finally {
       setLoading(false);
     }
+  }
+
+  ViewState getViewState() {
+    if (isLoading.value) {
+      return ViewState.loading;
+    }
+    if (hasError.value) {
+      return ViewState.error;
+    }
+    if (isEmpty.value){
+      return ViewState.empty;
+    }
+    return ViewState.content;
   }
 }
 

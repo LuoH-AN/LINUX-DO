@@ -1,3 +1,5 @@
+import 'package:linux_do/net/http_config.dart';
+
 class AppConst {
   /// L 站名称
   static const String siteName = 'LINUX DO';
@@ -7,6 +9,28 @@ class AppConst {
 
   /// 顶部信息
   static const String topInfo = '真诚、友善、团结、专业，共建你我引以为荣之社区。《常见问题解答》';
+
+  /// 通用提示
+  static const String commonTip = '提示';
+  static const updateSuccess = '更新成功';
+
+  /// 配置成功
+  static const configSuccess = '配置成功';
+
+  /// 配置失败
+  static const configFailed = '配置失败';
+
+  /// 更新失败
+  static const updateFailed = '更新失败';
+
+  /// 取消
+  static const cancel = '取消';
+
+  /// 确定
+  static const confirm = '确定';
+
+  /// 支持的语言
+  static const supportedLanguages = ['en', 'zh'];
 
   /// 抽屉菜单
   static const drawerMenu = _DrawerMenu();
@@ -19,6 +43,31 @@ class AppConst {
 
   /// 登录页面相关
   static const login = _LoginConst();
+
+  /// 设置相关
+  static const settings = _Settings();
+
+  /// 帖子相关
+  static const posts = _Posts();
+
+  /// 发帖相关
+  static const createPost = _CreatePost();
+
+  static const chat = _Chat();
+
+  /// 分类主题相关
+  static const categoryTopics = _CategoryTopics();
+
+  /// 排行榜相关
+  static const leaderboard = _Leaderboard();
+
+  /// 群组相关
+  static const group = _Group();
+
+  /// 活动相关
+  static const activity = _Activity();
+
+  static const _Birthday birthday = _Birthday();
 }
 
 /// 抽屉菜单文本
@@ -34,6 +83,11 @@ class _DrawerMenu {
   String get channels => '频道';
   String get inbox => '收件箱';
   String get regularChannel => '常规频道';
+  String get telegram => 'Telegram';
+  String get telegramChannel => 'Channel';
+  String get connect => 'Connect';
+  String get status => 'Status';
+  String get lottery => 'Lottery';
 
   // 类别
   String get devOptimization => '开发调优';
@@ -50,11 +104,16 @@ class _DrawerMenu {
   String get deepSea => '深海幽域';
 
   // 标签
-  String get lottery => '抽奖';
   String get essentialPosts => '精华神帖';
   String get ai => '人工智能';
   String get announcements => '公告';
   String get qa => '快问快答';
+
+  String get statusUrl => 'https://status.${HttpConfig.domain}';
+  String get connectUrl => 'https://connect.${HttpConfig.domain}';
+  String get lotteryUrl => 'https://lottery.${HttpConfig.domain}';
+  String get channelUrl => 'https://t.me/linux_do_channel';
+  String get jaTGUrl => 'https://t.me/ja_netfilter_group';
 }
 
 class _StateConst {
@@ -74,6 +133,10 @@ class _Identifier {
   String get language => 'language';
   String get isFirst => 'isFirst';
   String get csrfToken => 'csrfToken';
+  String get username => 'username';
+  String get clientId => 'clientId';
+  String get userId => 'userId';
+  String get name => 'name';
 }
 
 /// 登录页面文本
@@ -97,10 +160,177 @@ class _LoginConst {
   String get emptyUsername => '请输入账号';
   String get emptyPassword => '请输入密码';
   String get loginFailedTitle => '登录失败';
+  String get loginFailedMessage => '请检查网络连接或稍后重试';
   String get networkError => '请检查网络连接或稍后重试';
   String get userInfoError => '用户信息获取失败';
   String get loginSuccessTitle => '登录成功';
   String get welcomeBack => '欢迎回来';
   String get notImplemented => '此功能暂未开发';
-  String get registerTip => '请先前往https://linux.do站点注册';
+  String get registerTip => '请先前往${AppConst.siteName}站点注册';
+}
+
+/// 设置相关
+class _Settings {
+  const _Settings();
+
+  String get title => '设置';
+  String get accountAndProfile => '账号与个人资料';
+  String get accountSettings => '账号设置';
+  String get security => '安全设置';
+  String get editProfile => '编辑个人资料';
+  String get emailSettings => '邮箱设置';
+  String get dataExport => '数据导出';
+  String get notificationsAndPrivacy => '通知与隐私';
+  String get notifications => '通知设置';
+  String get tracking => '跟踪';
+  String get doNotDisturb => '免打扰设置';
+  String get anonymousMode => '匿名模式';
+  String get appearance => '外观';
+  String get darkMode => '深色模式';
+  String get themeSystem => '跟随系统';
+  String get themeLight => '浅色模式';
+  String get themeDark => '深色模式';
+  String get helpAndSupport => '帮助与支持';
+  String get about => '关于 ${AppConst.siteName}';
+  String get faq => '常见问题';
+  String get terms => '服务条款';
+  String get privacy => '隐私政策';
+  String get logout => '退出登录';
+  String get logoutConfirmTitle => '确认退出';
+  String get logoutConfirmMessage => '确定要退出登录吗？';
+  String get cancel => '取消';
+  String get confirm => '确定';
+  String get status => '输入你的状态...';
+}
+
+class _Posts {
+  const _Posts();
+
+  String get disturbSuccess => '设置免打扰成功';
+  String get error => '设置失败,请重试~';
+  String get reply => '回复';
+  String get replyPlaceholder => "提问、回复请记得：真诚、友善、团结、专业，共建你我引以为荣之社区。";
+  String get send => '发送';
+  String get replySuccess => '回复成功';
+  String get replyFailed => '回复失败';
+  String get searchTopic => '搜索话题';
+}
+
+/// 发帖相关常量
+class _CreatePost {
+  const _CreatePost();
+
+  String get title => '发布新主题';
+  String get preview => '预览';
+  String get previewTitle => '预览主题';
+  String get previewEmpty => '暂无预览内容';
+  String get previewCategory => '分类';
+  String get previewTags => '标签';
+  String get dialogTitle => '创建新的话题';
+  String get dialogContent => '为了更好的体验创建话题的功能，\n建议前往 Web 网站完成发布操作。';
+  String get dialogConfirm => '去创建';
+  String get dialogCancel => '取消';
+  String get categoryHint => '选择分类';
+  String get titleHint => '请输入标题';
+  String get addImage => '添加图片';
+  String get searchTag => '搜索标签';
+  String get publish => '发布';
+  String get draft => '保存草稿';
+  String get titleRequired => '请输入标题';
+  String get contentRequired => '请输入内容';
+  String get categoryRequired => '请选择分类';
+  String get publishSuccess => '发布成功';
+  String get draftSuccess => '草稿保存成功';
+  String get publishFailed => '发布失败';
+  String get draftFailed => '草稿保存失败';
+  String get selectCategory => '请选择分类';
+  String get addTags => '添加标签';
+  String get inputTips => '请输入内容';
+  String get uploadFailed => '图片上传失败';
+}
+
+class _Chat {
+  const _Chat();
+
+  String get title => '私信';
+  String get searchHint => '搜索';
+  String get noMessages => '暂无消息';
+  String get inputHint => '请输入消息';
+}
+
+class _CategoryTopics {
+  const _CategoryTopics();
+
+  String get groups => '群组';
+  String get ranking => '排行榜';
+  String get docs => '文档';
+  String get activities => '社区活动';
+  String get birthdays => '生日';
+  String get myPosts => '我的帖子';
+  String get myBookmarks => '我的书签';
+  String get loading => '加载中...';
+  String get noData => '暂无数据';
+}
+
+class _Birthday {
+  const _Birthday();
+
+  String get title => '生日';
+  String get today => '今天';
+  String get tomorrow => '明天';
+  String get upcoming => '即将到来';
+  String get all => '所有';
+  String get noBirthdays => '暂无生日信息';
+  String get loading => '加载中...';
+  String get error => '获取生日数据失败';
+  String get birthdayOn => '生日';
+}
+
+class _Activity {
+  const _Activity();
+
+  String get title => '社区活动';
+  String get noEvents => '暂无活动';
+  String get loading => '加载中...';
+  String get error => '获取活动数据失败';
+  String get startTime => '开始时间';
+  String get endTime => '结束时间';
+  String get viewDetail => '查看详情';
+  String get today => '今天';
+}
+
+class _Leaderboard {
+  const _Leaderboard();
+  final String title = '排行榜';
+  final String firstPlace = '第一名';
+  final String secondPlace = '第二名';
+  final String thirdPlace = '第三名';
+  final String points = '积分';
+  final String error = '获取排行榜数据失败';
+  final String empty = '暂无排行榜数据';
+
+  String get tips =>
+      '参与社区活动，如访问、点赞和发帖，都会获得积分。您的积分每几分钟就会更新一次。保持活跃，积极帮助并支持其他人来提高自己的排名！';
+  String get tipsTitle => '排行榜说明';
+  String get tipsKnow => '知道了';
+}
+
+class _Group {
+  const _Group();
+
+  String get title => '群组';
+  String get members => '成员';
+  String get join => '加入';
+  String get leave => '退出';
+  String get joinSuccess => '加入成功';
+  String get leaveSuccess => '退出成功';
+  String get joinFailed => '加入失败';
+  String get leaveFailed => '退出失败';
+  String get noDescription => '暂无描述';
+  String get publicGroup => '公开群组';
+  String get privateGroup => '私密群组';
+  String get loading => '加载中...';
+  String get error => '获取群组数据失败';
+  String get empty => '暂无群组数据';
+  String get search => '搜索群组';
 }

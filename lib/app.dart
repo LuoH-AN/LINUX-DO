@@ -1,9 +1,7 @@
-import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'controller/global_controller.dart';
 import 'net/api_service.dart';
 import 'net/http_client.dart';
+import 'net/http_config.dart';
 import 'utils/inject.dart';
 import 'utils/storage_manager.dart';
 import 'utils/device_util.dart';
@@ -21,7 +19,7 @@ class App {
   }
 
   /// 初始化App
-  static Future<void> initial() async {
+  Future<void> initial() async {
     // 初始化SharedPreferences
     await StorageManager.init();
 
@@ -32,13 +30,13 @@ class App {
     await ScreenUtil.ensureScreenSize();
 
     // 初始化HTTP客户端
-    final httpClient = await HttpClient.getInstance();
+    await HttpClient.getInstance().init();
 
     // 初始化API服务
-    Inject.put<ApiService>(ApiService(httpClient.dio));
+    Inject.put<ApiService>(ApiService(HttpClient.getInstance().dio,baseUrl: HttpConfig.baseUrl));
 
     Inject.put<GlobalController>(GlobalController());
-
+    
     // Tag的颜色
     Tag.init();
 
